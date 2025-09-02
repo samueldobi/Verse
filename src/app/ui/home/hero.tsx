@@ -1,3 +1,4 @@
+import Link from "next/link"
 export default function Hero(){
     return(
         <>
@@ -23,9 +24,12 @@ export default function Hero(){
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
+                <Link 
+                href="/learn">
                 <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-lg">
                   Find My Language Buddy
                 </button>
+                </Link>
                 <button className="px-8 py-4 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-600 font-semibold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                   Watch Demo
                 </button>
