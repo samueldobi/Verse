@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/navbar/navbar";
 import Footer from "@/components/footer/footer";
 
 const geistSans = Geist({
@@ -31,7 +32,7 @@ export default function RootLayout({
   <div className="relative min-h-screen">
     {/* Optional: Subtle background pattern */}
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(120,119,198,0.03),transparent_50%)] pointer-events-none" />
-
+    <Navbar/>
     {/* Main content wrapper */}
     <div className="relative z-10">{children}</div>
     <Footer/>

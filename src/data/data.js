@@ -1,5 +1,5 @@
 export const navLinks = [
-    { name: 'Home', href:'/home' },
+    { name: 'Home', href:'/' },
     { name: 'Learn', href:'/learn' },
     { name: 'Chat', href:'/chat' },
     { name: 'Culture', href:'/culture' },
@@ -45,4 +45,25 @@ export const languages = [
     { flag: '🇯🇵', name: '日本語' },
     { flag: '🇰🇷', name: '한국어' },
     { flag: '🇮🇹', name: 'Italiano' }
+  ];
+
+export const learnLanguages = [
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'es', name: 'Spanish', flag: '🇪🇸' },
+    { code: 'fr', name: 'French', flag: '🇫🇷' },
+    { code: 'de', name: 'German', flag: '🇩🇪' },
+    { code: 'zh', name: 'Mandarin', flag: '🇨🇳' },
+    { code: 'ja', name: 'Japanese', flag: '🇯🇵' },
+    { code: 'ko', name: 'Korean', flag: '🇰🇷' },
+    { code: 'it', name: 'Italian', flag: '🇮🇹' },
+    { code: 'pt', name: 'Portuguese', flag: '🇧🇷' },
+    { code: 'ru', name: 'Russian', flag: '🇷🇺' },
+    { code: 'ar', name: 'Arabic', flag: '🇸🇦' },
+    { code: 'hi', name: 'Hindi', flag: '🇮🇳' }
+  ];
+
+export const learnInterests = [
+    'Music', 'Technology', 'Sports', 'Movies', 'Food', 'Travel',
+    'Art', 'Books', 'Gaming', 'Fashion', 'Business', 'Science',
+    'Photography', 'Cooking', 'Fitness', 'Nature'
   ];
