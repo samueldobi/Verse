@@ -1,11 +1,12 @@
-export const navLinks = [
+import {NavLink, FooterLinks,Language, LearnLanguage, LearnInterest}  from "../types/types";
+export const navLinks: NavLink[] = [
     { name: 'Home', href:'/' },
     { name: 'Learn', href:'/learn' },
     { name: 'Chat', href:'/chat' },
     { name: 'Culture', href:'/culture' },
     { name: 'Login', href:'/login' },
 ] 
-export const footerLinks =  {
+export const footerLinks:FooterLinks =  {
     product: [
       { name: 'How it Works', href: '#' },
       { name: 'Languages', href: '#' },
@@ -36,7 +37,7 @@ export const footerLinks =  {
     ]
   };
 
-export const languages = [
+export const languages:Language[] = [
     { flag: '🇺🇸', name: 'English' },
     { flag: '🇪🇸', name: 'Español' },
     { flag: '🇫🇷', name: 'Français' },
@@ -47,7 +48,7 @@ export const languages = [
     { flag: '🇮🇹', name: 'Italiano' }
   ];
 
-export const learnLanguages = [
+export const learnLanguages:LearnLanguage[] = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
     { code: 'es', name: 'Spanish', flag: '🇪🇸' },
     { code: 'fr', name: 'French', flag: '🇫🇷' },
@@ -62,7 +63,7 @@ export const learnLanguages = [
     { code: 'hi', name: 'Hindi', flag: '🇮🇳' }
   ];
 
-export const learnInterests = [
+export const learnInterests:LearnInterest[] = [
     'Music', 'Technology', 'Sports', 'Movies', 'Food', 'Travel',
     'Art', 'Books', 'Gaming', 'Fashion', 'Business', 'Science',
     'Photography', 'Cooking', 'Fitness', 'Nature'
