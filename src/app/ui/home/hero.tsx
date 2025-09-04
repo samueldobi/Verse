@@ -73,7 +73,10 @@ export default function Hero(){
                       </div>
                     </div>
                     <div className="text-sm text-slate-600 dark:text-slate-300">
-                      "Today I learned about the Mid-Autumn Festival and how families gather to appreciate the moon..."
+                      <p>
+                        &quot;Today I learned about the Mid-Autumn Festival and how families gather to appreciate the moon...&quot;
+                      </p>
+                      
                     </div>
                   </div>
 
@@ -88,7 +91,7 @@ export default function Hero(){
                       </div>
                     </div>
                     <div className="text-sm text-slate-600 dark:text-slate-300">
-                      "¡Hola! Let's talk about tapas culture and how Spanish people socialize..."
+                      &quot;¡Hola! Lets talk about tapas culture and how Spanish people socialize...&quot;
                     </div>
                   </div>
 
@@ -103,7 +106,7 @@ export default function Hero(){
                       </div>
                     </div>
                     <div className="text-sm text-slate-600 dark:text-slate-300">
-                      "Bonjour! Today we explore French café culture and the art of conversation..."
+                      &quot;Bonjour! Today we explore French café culture and the art of conversation...&quot;
                     </div>
                   </div>
                 </div>

@@ -49,18 +49,34 @@ export const languages:Language[] = [
   ];
 
 export const learnLanguages:LearnLanguage[] = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'es', name: 'Spanish', flag: '🇪🇸' },
-    { code: 'fr', name: 'French', flag: '🇫🇷' },
-    { code: 'de', name: 'German', flag: '🇩🇪' },
-    { code: 'zh', name: 'Mandarin', flag: '🇨🇳' },
-    { code: 'ja', name: 'Japanese', flag: '🇯🇵' },
-    { code: 'ko', name: 'Korean', flag: '🇰🇷' },
-    { code: 'it', name: 'Italian', flag: '🇮🇹' },
-    { code: 'pt', name: 'Portuguese', flag: '🇧🇷' },
-    { code: 'ru', name: 'Russian', flag: '🇷🇺' },
-    { code: 'ar', name: 'Arabic', flag: '🇸🇦' },
-    { code: 'hi', name: 'Hindi', flag: '🇮🇳' }
+    { code: 'ig', name: 'Igbo', flag: '🇳🇬' },
+      { code: 'yo', name: 'Yoruba', flag: '🇳🇬' },
+      { code: 'ha', name: 'Hausa', flag: '🇳🇬' },
+      { code: 'ff', name: 'Fulfulde (Fulani)', flag: '🇳🇬' },
+      { code: 'ka', name: 'Kanuri', flag: '🇳🇬' },
+      { code: 'ti', name: 'Tiv', flag: '🇳🇬' },
+      { code: 'ib', name: 'Ibibio', flag: '🇳🇬' },
+      { code: 'ej', name: 'Ejagham', flag: '🇳🇬' },
+      { code: 'nu', name: 'Nupe', flag: '🇳🇬' },
+      { code: 'ij', name: 'Ijaw', flag: '🇳🇬' },
+
+      // West Africa
+      { code: 'tw', name: 'Twi (Akan)', flag: '🇬🇭' },
+      { code: 'ee', name: 'Ewe', flag: '🇹🇬' },
+      { code: 'bm', name: 'Bambara', flag: '🇲🇱' },
+      { code: 'wo', name: 'Wolof', flag: '🇸🇳' },
+
+      // East Africa
+      { code: 'sw', name: 'Swahili', flag: '🇰🇪' },
+      { code: 'om', name: 'Oromo', flag: '🇪🇹' },
+      { code: 'am', name: 'Amharic', flag: '🇪🇹' },
+
+      // Southern Africa
+      { code: 'zu', name: 'Zulu', flag: '🇿🇦' },
+      { code: 'xh', name: 'Xhosa', flag: '🇿🇦' },
+      { code: 'st', name: 'Sesotho', flag: '🇱🇸' },
+      { code: 'tn', name: 'Tswana', flag: '🇧🇼' },
+      { code: 'af', name: 'Afrikaans', flag: '🇿🇦' }
   ];
 
 export const learnInterests:LearnInterest[] = [

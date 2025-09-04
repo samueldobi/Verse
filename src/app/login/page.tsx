@@ -2,23 +2,27 @@
 import React, { useState } from 'react';
 import {register, login } from "@/firebase";
 import { useRouter } from 'next/navigation';
+import { FormData, FormErrors } from '@/types/loginTypes';
 
 export default function AuthPage() {
+
+
+
   const router =  useRouter();
-  const [isLogin, setIsLogin] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [isLogin, setIsLogin] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
     agreeTerms: false
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<FormErrors>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const validateForm = () => {
-    const newErrors = {};
+  const validateForm = ():boolean => {
+    const newErrors: FormErrors = {};
 
     if (!formData.email) {
       newErrors.email = 'Email is required';
@@ -63,51 +67,66 @@ const getFriendlyError = (code: string) => {
   }
 };
 
-  const handleSubmit = async (e) => {
-    e?.preventDefault();
-    const {name, email, password} =  formData
-    if (!validateForm()) return;
-    setIsLoading(true);
-    if(isLogin){
-      try{
-        // await login(email, password);
-        const userCredential = await login(email, password); 
-        console.log("🔥 Logged in user:", userCredential.user)
-        router.push("/learn");
-        // console.log("user:", email, password)
-      }catch(err){
-         setIsLoading(false)
-        console.log(err)
-        setErrorMessage(getFriendlyError(err.code));
+ const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  e.preventDefault();
+  const { name, email, password } = formData;
+
+  if (!validateForm()) return;
+  setIsLoading(true);
+
+  if (isLogin) {
+    try {
+      const userCredential = await login(email, password);
+      console.log("🔥 Logged in user:", userCredential.user);
+      router.push("/learn");
+    } catch (err: unknown) {
+      setIsLoading(false);
+      console.error(err);
+
+      if (err && typeof err === "object" && "code" in err) {
+        // Firebase-style error with a 'code' property
+        setErrorMessage(getFriendlyError((err as { code: string }).code));
+      } else if (err instanceof Error) {
+        // Generic JS error
+        setErrorMessage(err.message);
+      } else {
+        setErrorMessage("An unexpected error occurred");
       }
     }
-    else{
-          try{
-          await register(email,name, password)
-          router.push("/");
-        }catch(err){
-          setIsLoading(false)
-          console.log(err)
-          setErrorMessage(getFriendlyError(err.code));
-    }
-    }
-  };
+  } else {
+    try {
+      await register(email, name, password);
+      router.push("/");
+    } catch (err: unknown) {
+      setIsLoading(false);
+      console.error(err);
 
-  const handleInputChange = (e) => {
+      if (err && typeof err === "object" && "code" in err) {
+        setErrorMessage(getFriendlyError((err as { code: string }).code));
+      } else if (err instanceof Error) {
+        setErrorMessage(err.message);
+      } else {
+        setErrorMessage("An unexpected error occurred");
+      }
+    }
+  }
+};
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
     // Clear error when user starts typing
-    if (errors[name]) {
+    if (errors[name as keyof FormData]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
 
-  const handleSocialAuth = (provider) => {
-    alert(`${provider} authentication would be implemented here`);
-  };
+  // const handleSocialAuth = (provider) => {
+  //   alert(`${provider} authentication would be implemented here`);
+  
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
@@ -219,14 +238,14 @@ const getFriendlyError = (code: string) => {
               {/* Social Login Buttons */}
               <div className="space-y-3 mb-6">
                 <button 
-                  onClick={() => handleSocialAuth('Google')}
+                  // onClick={() => handleSocialAuth('Google')}
                   className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 flex items-center justify-center space-x-3 group"
                 >
                   <div className="w-5 h-5 bg-red-500 rounded-sm group-hover:scale-110 transition-transform"></div>
                   <span className="text-slate-700 dark:text-slate-300 font-medium">Continue with Google</span>
                 </button>
                 <button 
-                  onClick={() => handleSocialAuth('Facebook')}
+                  // onClick={() => handleSocialAuth('Facebook')}
                   className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 flex items-center justify-center space-x-3 group"
                 >
                   <div className="w-5 h-5 bg-blue-600 rounded-sm group-hover:scale-110 transition-transform"></div>

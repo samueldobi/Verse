@@ -1,16 +1,19 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 import ProtectedRoute from '@/components/protectedRoutes/protectedRoutes';
+import { Message, Buddy } from '@/types/learnTypes';
 
 export default function ChatPage() {
-  const [selectedBuddy, setSelectedBuddy] = useState(null);
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState({});
-  const [showSidebar, setShowSidebar] = useState(true);
-  const messagesEndRef = useRef(null);
+  const [selectedBuddy, setSelectedBuddy] = useState< Buddy | null>(null);
+  const [message, setMessage] = useState<string>('');
+  const [messages, setMessages] = useState<Record<number, Message[]>>({});
+  const [showSidebar, setShowSidebar] = useState<boolean>(true);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+
 
   // Mock data for buddies
-  const buddies = [
+  const buddies:Buddy[] = [
     {
       id: 1,
       name: 'Maria González',
@@ -58,7 +61,7 @@ export default function ChatPage() {
   ];
 
   // Mock messages
-  const mockMessages = {
+  const mockMessages: Record<number, Message[]> = {
     1: [
       { id: 1, sender: 'buddy', text: '¡Hola! How was your weekend?', time: '10:30 AM' },
       { id: 2, sender: 'me', text: 'Hi Maria! It was great, I went hiking. How do you say "mountain" in Spanish?', time: '10:32 AM' },
@@ -78,10 +81,10 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, selectedBuddy]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = ():void => {
     if (!message.trim() || !selectedBuddy) return;
 
-    const newMessage = {
+    const newMessage: Message = {
       id: Date.now(),
       sender: 'me',
       text: message,
@@ -95,7 +98,7 @@ export default function ChatPage() {
     setMessage('');
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>): void  => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();

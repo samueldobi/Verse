@@ -39,7 +39,7 @@ export default function Navbar(){
 
             {/* Enhanced Navigation Links */}
             <div className="hidden lg:flex items-center space-x-1">
-              {navLinks.map((link, index) => (
+              {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}

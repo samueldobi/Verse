@@ -20,7 +20,7 @@ export default function Features(){
               </div>
               <h3 className="text-xl font-semibold">Cultural Learning</h3>
               <p className="text-slate-600 dark:text-slate-300">
-                Discover traditions, customs, and local insights that textbooks can't teach
+                Discover traditions, customs, and local insights that textbooks cant teach
               </p>
             </div>
 

@@ -127,7 +127,7 @@ export default function LearnPage() {
                   What are you interested in?
                 </h3>
                 <p className="text-slate-600 dark:text-slate-400 text-sm">
-                  Select topics you'd love to discuss with your language buddy
+                  Select topics you would love to discuss with your language buddy
                 </p>
               </div>
 
