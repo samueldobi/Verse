@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
+import ProtectedRoute from '@/components/protectedRoutes/protectedRoutes';
 
 export default function ChatPage() {
   const [selectedBuddy, setSelectedBuddy] = useState(null);
@@ -102,6 +103,7 @@ export default function ChatPage() {
   };
 
   return (
+    <ProtectedRoute>
     <div className="h-screen bg-slate-50 dark:bg-slate-900 flex relative">
       {/* Mobile Overlay */}
       {showSidebar && selectedBuddy && (
@@ -240,5 +242,6 @@ export default function ChatPage() {
         )}
       </div>
     </div>
+    </ProtectedRoute>
   );
 }
