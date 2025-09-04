@@ -2,9 +2,21 @@
 import {navLinks} from "@/data/data";
 import { useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@/context/auth";
+import { Fragment } from "react";
+import { logout } from "@/firebase";
+import { useRouter } from "next/navigation";
 
 export default function Navbar(){
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const {currentUser} = useAuth();
+  const router = useRouter();
+  const handleLogOut = ()=> {
+    router.push("/login")
+    return logout();
+    
+  }
+  console.log(currentUser)
     return(
         <>
           <nav className="relative px-6 py-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50  top-0 z-50">
@@ -41,13 +53,32 @@ export default function Navbar(){
 
             {/* Enhanced Action Buttons */}
             <div className="hidden md:flex items-center space-x-3">
-              <button className="px-5 py-2.5 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
-                Sign In
-              </button>
-              <button className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25 relative overflow-hidden group">
-                <span className="relative z-10">Get Started</span>
-                <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-              </button>
+              {currentUser && (
+                <div className="px-5 py-2.5 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
+                 Welcome {''} {currentUser.username }
+              </div>
+              )}
+              
+                {currentUser === null ? (
+                <Fragment>
+                   <Link href="/login">
+                  <button className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25 relative overflow-hidden group">
+                    <span className="relative z-10">Login/Signup</span>
+                    <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                  </button>
+                  </Link>
+                </Fragment>
+              ) : (
+                <Fragment>
+                  <button onClick={handleLogOut}
+                   className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25 relative overflow-hidden group">
+                    <span className="relative z-10">Logout</span>
+                    <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                  </button>
+                </Fragment>
+              )}
+              
+             
             </div>
 
             {/* Mobile Menu Button */}

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar/navbar";
 import Footer from "@/components/footer/footer";
+import { AuthProvider } from "@/context/auth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,17 +31,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
- className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-500/20 selection:text-blue-900 dark:selection:bg-blue-400/30 dark:selection:text-blue-100`}
->
-  <div className="relative min-h-screen">
-    {/* Optional: Subtle background pattern */}
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(120,119,198,0.03),transparent_50%)] pointer-events-none" />
-    <Navbar/>
-    {/* Main content wrapper */}
-    <div className="relative z-10">{children}</div>
-    <Footer/>
-  </div>
-</body>
+      className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-500/20 selection:text-blue-900 dark:selection:bg-blue-400/30 dark:selection:text-blue-100`}>
+      <AuthProvider>
+        <div className="relative min-h-screen">
+          {/*  Subtle background pattern */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(120,119,198,0.03),transparent_50%)] pointer-events-none" />
+          <Navbar/>
+          {/* Main content wrapper */}
+          <div className="relative z-10">{children}</div>
+          <Footer/>
+        </div>
+        </AuthProvider>
+      </body>
     </html>
   );
 }

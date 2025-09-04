@@ -1,7 +1,10 @@
 "use client";
 import React, { useState } from 'react';
+import {register, login } from "@/firebase";
+import { useRouter } from 'next/navigation';
 
 export default function AuthPage() {
+  const router =  useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -12,6 +15,7 @@ export default function AuthPage() {
     agreeTerms: false
   });
   const [errors, setErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const validateForm = () => {
     const newErrors = {};
@@ -43,18 +47,50 @@ export default function AuthPage() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+// error messages
+const getFriendlyError = (code: string) => {
+  switch (code) {
+    case 'auth/invalid-credential':
+      return 'Invalid credentials. Please check your email and password.';
+    case 'auth/user-not-found':
+      return 'No account found with this email.';
+    case 'auth/email-already-in-use':
+      return 'This email is already in use';
+    case 'auth/wrong-password':
+      return 'Incorrect password.';
+    default:
+      return 'Something went wrong. Please try again.';
+  }
+};
 
   const handleSubmit = async (e) => {
     e?.preventDefault();
+    const {name, email, password} =  formData
     if (!validateForm()) return;
-
     setIsLoading(true);
-    // Mock API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsLoading(false);
-
-    // In real app, handle authentication here
-    alert(isLogin ? 'Login successful!' : 'Account created successfully!');
+    if(isLogin){
+      try{
+        // await login(email, password);
+        const userCredential = await login(email, password); 
+        console.log("🔥 Logged in user:", userCredential.user)
+        router.push("/learn");
+        // console.log("user:", email, password)
+      }catch(err){
+         setIsLoading(false)
+        console.log(err)
+        setErrorMessage(getFriendlyError(err.code));
+      }
+    }
+    else{
+          try{
+          await register(email,name, password)
+          router.push("/");
+        }catch(err){
+          setIsLoading(false)
+          console.log(err)
+          setErrorMessage(getFriendlyError(err.code));
+    }
+    }
   };
 
   const handleInputChange = (e) => {
@@ -214,6 +250,8 @@ export default function AuthPage() {
             {/* Form Fields */}
             <div className="p-6 pt-0 space-y-4">
               {/* Name Field (Signup only) */}
+              { errorMessage && 
+              <div className='text-red-400 mt-2'>{errorMessage}</div>}
               {!isLogin && (
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
