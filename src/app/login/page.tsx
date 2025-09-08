@@ -3,10 +3,9 @@ import React, { useState } from 'react';
 import {register, login } from "@/firebase";
 import { useRouter } from 'next/navigation';
 import { FormData, FormErrors } from '@/types/loginTypes';
+import axios from 'axios';
 
 export default function AuthPage() {
-
-
 
   const router =  useRouter();
   const [isLogin, setIsLogin] = useState<boolean>(true);
@@ -77,7 +76,6 @@ const getFriendlyError = (code: string) => {
   if (isLogin) {
     try {
       const userCredential = await login(email, password);
-      console.log("🔥 Logged in user:", userCredential.user);
       router.push("/learn");
     } catch (err: unknown) {
       setIsLoading(false);
@@ -96,6 +94,13 @@ const getFriendlyError = (code: string) => {
   } else {
     try {
       await register(email, name, password);
+      const userID = (await login(email, password)).user.uid;
+      await axios.post("/api/users", { 
+        uid: userID,
+        name,
+        email,
+       });
+       console.log("📤 Sent user to API:", { uid: userID, name, email });
       router.push("/");
     } catch (err: unknown) {
       setIsLoading(false);
@@ -123,9 +128,6 @@ const getFriendlyError = (code: string) => {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
-
-  // const handleSocialAuth = (provider) => {
-  //   alert(`${provider} authentication would be implemented here`);
   
 
   return (

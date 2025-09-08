@@ -4,6 +4,7 @@ import {
   getAuth,
   signInWithEmailAndPassword,
   updateProfile,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -19,10 +20,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth =  getAuth(app);
 
-export const register = (email, username, password) => {
-  return createUserWithEmailAndPassword(auth, email, password).then(
-    (response) => updateProfile(response.user, { displayName: username })
-  );
+export const register = async (email, username, password) => {
+  try{
+    const response = await createUserWithEmailAndPassword(auth, email, password);
+    await updateProfile(response.user, { displayName: username });
+    return response.user;
+  }catch(error){
+    console.error("Error during registration:", error);
+    throw error;
+  }
 };
 
 export const login = (email, password) => {
@@ -32,3 +38,6 @@ export const login = (email, password) => {
 export const logout = () => {
   return auth.signOut();
 };
+export const resetPassword = ()=>{
+  return sendPasswordResetEmail(auth,email)
+}

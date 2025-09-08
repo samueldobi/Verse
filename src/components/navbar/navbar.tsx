@@ -2,7 +2,7 @@
 import {navLinks} from "@/data/data";
 import { useState } from "react";
 import Link from "next/link";
-import { useAuth } from "@/context/auth";
+import { useAuth } from "../../context/auth";
 import { Fragment } from "react";
 import { logout } from "@/firebase";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,6 @@ export default function Navbar(){
     return logout();
     
   }
-  console.log(currentUser)
     return(
         <>
           <nav className="relative px-6 py-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50  top-0 z-50">
