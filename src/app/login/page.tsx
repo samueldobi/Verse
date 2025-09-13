@@ -100,7 +100,6 @@ const getFriendlyError = (code: string) => {
         name,
         email,
        });
-       console.log("📤 Sent user to API:", { uid: userID, name, email });
       router.push("/");
     } catch (err: unknown) {
       setIsLoading(false);

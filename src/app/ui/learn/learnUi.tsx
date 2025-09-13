@@ -1,14 +1,18 @@
 "use client";
 import React, { useState } from 'react';
 import { learnLanguages,learnInterests } from '@/data/data';
+import axios from 'axios';
+import { useAuth } from '@/context/auth';
+import { useRouter } from 'next/navigation';
 
 export default function LearnPage() {
   const [speakLanguage, setSpeakLanguage] = useState('');
   const [learnLanguage, setLearnLanguage] = useState('');
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
-
+  const pairingRouter = useRouter();
+// getting the user id
+  const { currentUser } = useAuth();
   const handleInterestToggle = (interest: string) => {
     setSelectedInterests(prev => 
       prev.includes(interest) 
@@ -19,10 +23,19 @@ export default function LearnPage() {
 
   const handleFindBuddy = async () => {
     if (!speakLanguage || !learnLanguage) return;
-    
-    setIsLoading(true);
-    // Mock API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    const userId = currentUser?.uid;
+    try{
+       await axios.post(`api/users/${userId}/preferences`,{
+        speaks_language:speakLanguage,
+        learning_language:learnLanguage,
+       });
+        setIsLoading(true);
+        setTimeout(() => {
+          pairingRouter.push('/pairing');
+        }, 2000); // Simulate loading for 2 seconds
+    }catch(err){
+      console.error("❌ Error saving preferences:", err);
+    }
     setIsLoading(false);
     
     // In real app, redirect to matching results or buddy profile
