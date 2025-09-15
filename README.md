@@ -52,10 +52,16 @@ NEXT_PUBLIC_FIREBASE_APP_ID=your_firebase_app_id
 
 📂 Project Structure
 project-verse/
-│── pages/          # Next.js pages & routes
-│── components/     # Reusable UI components
-│── lib/            # Database and Firebase config
-│── public/         # Static assets
-│── styles/         # Global & module CSS
-│── package.json
-│── README.md
+│── public/ # Static assets (images, icons, fonts, )
+│── scripts/ # Utility scripts for testing, setup, or automation
+│── src/ # Main application source code
+│ │── app/ # Next.js 15 App Router (routes, layouts, server components)
+│ │── components/ # Reusable React components (UI elements, forms, layouts)
+│ │── context/ # React context providers ( auth)
+│ │── data/ # Static or seed data ( constants, JSON files)
+│ │── lib/ # Configuration and helpers (db client, firebase, utils)
+│ │── queries/ # Database queries for postgres
+│ │── types/ # TypeScript type definitions and interfaces
+│── .env.local # Environment variables (not committed to Git)
+│── package.json # Project metadata and dependencies
+│── README.md # Project documentation
