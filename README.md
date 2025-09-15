@@ -23,6 +23,14 @@ It is built to promote **cultural exchange, inclusivity, and accessible learning
 - **Authentication:** Firebase Authentication
 - **Hosting:** Vercel
 
+
+
+##  Sneak Peek
+<img width="1335" height="628" alt="Image" src="https://github.com/user-attachments/assets/dd11d1a5-474a-4863-9500-5b822c5efa35" />
+
+<img width="1316" height="637" alt="Image" src="https://github.com/user-attachments/assets/4db6c338-bdfd-4070-b1fa-2f234e3e1e5b" />
+
+<img width="847" height="640" alt="Image" src="https://github.com/user-attachments/assets/0cbfaa53-e34d-48c8-894b-0656f70da8dd" />
 ---
 
 ##  Getting Started  
