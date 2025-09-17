@@ -1,5 +1,5 @@
 "use client";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { createContext, useContext, useEffect, useState} from "react";
 import { auth } from "@/firebase";
 import {  AuthContextType, AuthUser } from "@/types/authTypes";
@@ -23,13 +23,13 @@ useEffect(() => {
             if (!res.ok) throw new Error("Failed to fetch DB user");
 
             const dbUser = await res.json();
-
             setCurrentUser({
             uid: user.uid,
             email: user.email,
             username: user.displayName,
             id: dbUser.id,
             });
+            autoLogout(auth, 30 * 60 * 100);
         } catch (err) {
             console.error("❌ Failed to sync user with DB:", err);
             setCurrentUser({
@@ -52,3 +52,10 @@ useEffect(() => {
         </AuthContext.Provider>
     );
 };
+function autoLogout(auth: typeof import("@/firebase").auth, timeoutMs: number) {
+  setTimeout(() => {
+    signOut(auth).then(() => {
+      console.log("⏳ User logged out due to timeout");
+    });
+  }, timeoutMs);
+}
