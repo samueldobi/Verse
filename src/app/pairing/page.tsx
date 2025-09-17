@@ -7,7 +7,7 @@ import { useAuth } from '@/context/auth';
 export default function PairingPage() {
     const {currentUser} = useAuth(); 
     const userId = currentUser?.id; 
-    const [selectedMatch, setSelectedMatch] = useState<null | boolean>(null);
+    // const [selectedMatch, setSelectedMatch] = useState<null | boolean>(null);
     const [matches, setMatches] = useState<Array<any>>([]);
 
   //   const matches = [
@@ -79,11 +79,11 @@ export default function PairingPage() {
       setMatches(res.data || []);
       if (!res?.data || res.data.length === 0) {
         console.warn("No matches found for user:", currentUser.id);
-        setSelectedMatch(false); 
+        // setSelectedMatch(false); 
         return;
       }
 
-      setSelectedMatch(true);
+      // setSelectedMatch(true);
       console.log(res);
     } catch (err) {
       console.error("❌ Error fetching matches:", err);
@@ -128,14 +128,15 @@ export default function PairingPage() {
 
         {/* Matches Grid */}
         <div className="space-y-4">
-          {selectedMatch === null ? (
-            <div className="text-center text-slate-600 dark:text-slate-400">
+          {matches.length == 0 ? (
+            <div key="no-matches"
+            className="text-center text-slate-600 dark:text-slate-400">
               <p className="text-lg mb-4">No matches found yet. Please check back later!</p>
               <div className="w-16 h-16 mx-auto border-4 border-dashed border-slate-300 dark:border-slate-600 rounded-full animate-pulse"></div>
             </div>
           ):(
             matches.map((item)=>(
-              <div key={item.id}
+              <div key={item.id ?? item.uid}
               className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50 p-6 hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-slate-900/50 transition-all duration-300 hover:scale-[1.02]"
               >
                   <div className="flex items-start gap-4">
@@ -223,8 +224,6 @@ export default function PairingPage() {
               </div>
             ))
           )}
-       {/* matches content  */}
-       {/* matches content  */}
         </div>
 
         {/* Load More Button */}

@@ -1,13 +1,17 @@
 import { NextResponse } from "next/server";
 import {  getUserByUid } from "@/queries/userQueries";
 
+interface Props {
+  params: { id: string };
+}
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+ req: Request, 
+ { params }: Props
 ) {
   try {
-    const { id } = params; 
-    const user = await getUserByUid(id); 
+    const {id} =  await params;
+    const userId =  id; 
+    const user = await getUserByUid(userId); 
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
