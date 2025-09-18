@@ -106,20 +106,30 @@ export default function Navbar(){
                   {link.name}
                 </a>
               ))}
-              <div className="pt-4 space-y-3 border-t border-slate-200 dark:border-slate-700">
-                <button 
-                  className="w-full px-4 py-3 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Sign In
-                </button>
-                <button 
-                  className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Get Started
-                </button>
+                  <div className="pt-4 space-y-3 border-t border-slate-200 dark:border-slate-700">
+            
+                {!currentUser ? (
+                  <Link href="/login">
+                    <button
+                      className="w-full px-4 py-3 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Login/Signup
+                    </button>
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => {
+                      handleLogOut();
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg"
+                  >
+                    Logout
+                  </button>
+                )}
               </div>
+
             </div>
           </div>
         </nav>

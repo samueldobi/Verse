@@ -5,8 +5,6 @@ import { auth } from "@/firebase";
 import {  AuthContextType, AuthUser } from "@/types/authTypes";
 
 
-
-
 export const AuthContext = createContext<AuthContextType>({
     currentUser: null,
 });
@@ -29,7 +27,7 @@ useEffect(() => {
             username: user.displayName,
             id: dbUser.id,
             });
-            autoLogout(auth, 30 * 60 * 100);
+            autoLogout(auth, 60 * 60 * 1000);
         } catch (err) {
             console.error("❌ Failed to sync user with DB:", err);
             setCurrentUser({
