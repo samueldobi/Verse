@@ -51,7 +51,7 @@ export default function Navbar(){
             </div>
 
             {/* Enhanced Action Buttons */}
-            <div className="hidden md:flex items-center space-x-3">
+            <div className="hidden lg:flex items-center space-x-3">
               {currentUser && (
                 <div className="px-5 py-2.5 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200">
                  Welcome {''} {currentUser.username }
@@ -83,7 +83,7 @@ export default function Navbar(){
             {/* Mobile Menu Button */}
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden relative w-10 h-10 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center justify-center"
+              className="lg:hidden relative w-10 h-10 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center justify-center"
             >
               <div className="w-6 h-6 relative">
                 <span className={`absolute block w-6 h-0.5 bg-slate-700 dark:bg-slate-300 transform transition-all duration-300 ${isMenuOpen ? 'rotate-45 top-3' : 'top-1'}`}></span>
@@ -94,7 +94,7 @@ export default function Navbar(){
           </div>
 
           {/* Enhanced Mobile Menu */}
-          <div className={`md:hidden absolute top-full left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50 transform transition-all duration-300 ${isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}`}>
+          <div className={`lg:hidden absolute top-full left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50 transform transition-all duration-300 ${isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}`}>
             <div className="px-6 py-6 space-y-4">
               {navLinks.map((link) => (
                 <a
@@ -106,20 +106,30 @@ export default function Navbar(){
                   {link.name}
                 </a>
               ))}
-              <div className="pt-4 space-y-3 border-t border-slate-200 dark:border-slate-700">
-                <button 
-                  className="w-full px-4 py-3 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Sign In
-                </button>
-                <button 
-                  className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Get Started
-                </button>
+                  <div className="pt-4 space-y-3 border-t border-slate-200 dark:border-slate-700">
+            
+                {!currentUser ? (
+                  <Link href="/login">
+                    <button
+                      className="w-full px-4 py-3 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Login/Signup
+                    </button>
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => {
+                      handleLogOut();
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg"
+                  >
+                    Logout
+                  </button>
+                )}
               </div>
+
             </div>
           </div>
         </nav>
