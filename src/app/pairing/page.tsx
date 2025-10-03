@@ -8,7 +8,7 @@ export default function PairingPage() {
     const {currentUser} = useAuth(); 
     const userId = currentUser?.id; 
     // const [selectedMatch, setSelectedMatch] = useState<null | boolean>(null);
-    const [matches, setMatches] = useState<Array<any>>([]);
+    const [matches, setMatches] = useState<unknown[]>([]);
 
   //   const matches = [
   //   {

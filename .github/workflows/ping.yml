@@ -1,12 +1,13 @@
 name: Ping Supabase
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "*/30 * * * *"   # every 30 minutes
-  workflow_dispatch:          # manual trigger
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - run: curl https://supabase.com/dashboard/project/jxdycvtemkmfzriqvsrd/ || true
+      - name: Keep Supabase awake
+        run: curl https://jxdycvtemkmfzriqvsrd.supabase.co/rest/v1/ || true
