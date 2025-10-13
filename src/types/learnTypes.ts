@@ -3,7 +3,7 @@ export type Language = {
   name: string;
   flag: string;
 };
-export type Buddy = {
+export type Friends = {
   id: number;
   name: string;
   avatar: string;

@@ -18,11 +18,11 @@ export async function addLanguagePreference(user_id:number, speaks_language:stri
         throw err;
     }
 } 
-export async function matchLanguages(userId: number) {
+export async function matchLanguages(userId: string) {
   try {
     const matchLangQuery = `
       SELECT
-        u2.uid AS match_uid,          -- return Firebase UID for frontend use
+        u2.uid AS match_uid,          
         u2.name AS name,
         up2.speaks_language AS speaks_language,
         up2.learning_language AS learning_language
@@ -30,8 +30,8 @@ export async function matchLanguages(userId: number) {
       JOIN user_prefs up2
         ON up1.speaks_language = up2.learning_language
        AND up1.learning_language = up2.speaks_language
-      JOIN users u2 ON up2.user_id = u2.id   -- 🔥 join on integer PK, not uid
-      WHERE up1.user_id = $1                 -- 🔥 compare using integer id
+      JOIN users u2 ON up2.user_id = u2.id   --  join on integer PK, not uid
+      WHERE up1.user_id = $1                 --  compare using integer id
         AND up2.user_id <> up1.user_id;
     `;
     const values = [userId];

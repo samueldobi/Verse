@@ -1,10 +1,10 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 import ProtectedRoute from '@/components/protectedRoutes/protectedRoutes';
-import { Message, Buddy } from '@/types/learnTypes';
+import { Message, Friends } from '@/types/learnTypes';
 
 export default function ChatPage() {
-  const [selectedBuddy, setSelectedBuddy] = useState< Buddy | null>(null);
+  const [selectedBuddy, setSelectedBuddy] = useState< Friends | null>(null);
   const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<Record<number, Message[]>>({});
   const [showSidebar, setShowSidebar] = useState<boolean>(true);
@@ -13,7 +13,7 @@ export default function ChatPage() {
 
 
   // Mock data for buddies
-  const buddies:Buddy[] = [
+  const buddies:Friends[] = [
     {
       id: 1,
       name: 'Maria González',
@@ -120,7 +120,7 @@ export default function ChatPage() {
       <div className={`${showSidebar || !selectedBuddy ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 fixed md:relative z-50 w-80 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col h-full transition-transform duration-300 ease-in-out`}>
         <div className="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
           <div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Language Buddies</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Chats </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400">
               {buddies.filter(b => b.online).length} online now
             </p>
