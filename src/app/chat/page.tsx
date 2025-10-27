@@ -2,6 +2,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ProtectedRoute from '@/components/protectedRoutes/protectedRoutes';
 import { Message, Friends } from '@/types/learnTypes';
+import axios from 'axios';
+import { useAuth } from '@/context/auth';
 
 export default function ChatPage() {
   const [selectedBuddy, setSelectedBuddy] = useState< Friends | null>(null);
@@ -12,6 +14,10 @@ export default function ChatPage() {
 
 
 
+
+  // Get current user id
+  const {currentUser } = useAuth();
+  const userId = currentUser?.id;  
   // Mock data for buddies
   const buddies:Friends[] = [
     {
@@ -80,6 +86,19 @@ export default function ChatPage() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, selectedBuddy]);
+  useEffect(()=>{
+    const fetchChats = async ()=>{
+      try{
+        const res = await axios.get(
+        `api/chats?userId=${userId}`
+        )
+        console.log(res.data)
+      }catch(err){
+        console.log("Failed to fetch chats", err)
+      }
+    }
+    fetchChats();
+  })
 
   const handleSendMessage = ():void => {
     if (!message.trim() || !selectedBuddy) return;

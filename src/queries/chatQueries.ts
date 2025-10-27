@@ -21,3 +21,20 @@ export async function startChatSession( user1_id:string, user2_id:string){
     }
 
 }
+export async function retrieveUserChats(user_id:string){
+    try{
+        const retrieveChatsQuery = `
+        SELECT c.id, c.created_at
+        FROM chats c
+        JOIN chat_participants cp 
+        ON cp.chat_id = c.id
+        WHERE  cp.user_id = $1;
+        `;
+        const values = [user_id];
+        const {rows} = await pool.query( retrieveChatsQuery, values)
+        return rows;
+    }catch(err){
+        console.error("error returning chats", err);
+        throw err;
+    }
+}

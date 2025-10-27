@@ -16,8 +16,8 @@ export async function addUser(uid:string, name:string, email:string){
       INSERT INTO users (uid, email, name)
       VALUES ($1, $2, $3)
       ON CONFLICT (uid) DO UPDATE 
-        SET email = EXCLUDED.email,
-            name = EXCLUDED.name
+      SET email = EXCLUDED.email,
+      name = EXCLUDED.name
       RETURNING *;
     `;
     const values = [uid, email, name];
