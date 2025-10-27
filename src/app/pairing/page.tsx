@@ -5,12 +5,13 @@ import { MessageCircle, Globe, Star, Clock, MapPin } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '@/context/auth';
 import { useRouter } from 'next/navigation';
+import { Match } from '@/types/learnTypes';
 export default function PairingPage() {
     const {currentUser} = useAuth(); 
     const userId = currentUser?.id; 
     const router = useRouter();
     // const [selectedMatch, setSelectedMatch] = useState<null | boolean>(null);
-    const [matches, setMatches] = useState<unknown[]>([]);
+    const [matches, setMatches] = useState<Match[]>([]);
 
 
 useEffect(()=>{
@@ -99,7 +100,7 @@ useEffect(()=>{
             </div>
           ):(
             matches.map((match)=>(
-              <div key={match.id}
+              <div key={match.match_id}
               className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50 p-6 hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-slate-900/50 transition-all duration-300 hover:scale-[1.02]"
               >
                   <div className="flex items-start gap-4">

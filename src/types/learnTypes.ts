@@ -20,3 +20,10 @@ export type Message = {
   text: string;
   time: string;
 };
+export type Match =  {
+  match_id: number;
+  match_uid: string;
+  name: string;
+  speaks_language: string;
+  learning_language: string;
+}

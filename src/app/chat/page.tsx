@@ -11,6 +11,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Record<number, Message[]>>({});
   const [showSidebar, setShowSidebar] = useState<boolean>(true);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const [chatList, setChatList] =  useState<any[]>([]);
 
 
 
@@ -92,13 +93,13 @@ export default function ChatPage() {
         const res = await axios.get(
         `api/chats?userId=${userId}`
         )
-        console.log(res.data)
+        setChatList(res.data.getChats);
       }catch(err){
         console.log("Failed to fetch chats", err)
       }
     }
     fetchChats();
-  })
+  }, [userId])
 
   const handleSendMessage = ():void => {
     if (!message.trim() || !selectedBuddy) return;
@@ -153,7 +154,7 @@ export default function ChatPage() {
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          {buddies.map((buddy) => (
+          {/* {buddies.map((buddy) => (
             <button
               key={buddy.id}
               onClick={() => {
@@ -185,8 +186,20 @@ export default function ChatPage() {
                 </div>
               </div>
             </button>
-          ))}
-        </div>
+          ))} */}
+            <div>
+          {chatList.length === 0 ? (
+            <p>No chats found</p>
+          ) : (
+            chatList.map((item) => (
+              <div key={item.chat_id}>
+                {item.participant_name}
+              </div>
+            ))
+          )}
+
+    </div>
+    </div>
       </div>
 
       {/* Chat Area */}
