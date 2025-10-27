@@ -22,6 +22,7 @@ export async function matchLanguages(userId: string) {
   try {
     const matchLangQuery = `
       SELECT
+        u2.id AS match_id,
         u2.uid AS match_uid,          
         u2.name AS name,
         up2.speaks_language AS speaks_language,

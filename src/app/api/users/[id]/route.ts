@@ -9,7 +9,7 @@ export async function GET(
  { params }: Props
 ) {
   try {
-    const {id} =  await params;
+    const {id} =  params;
     const userId =  id; 
     const user = await getUserByUid(userId); 
 

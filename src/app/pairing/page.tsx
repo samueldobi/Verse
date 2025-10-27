@@ -4,100 +4,63 @@ import React, { useState, useEffect } from 'react';
 import { MessageCircle, Globe, Star, Clock, MapPin } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '@/context/auth';
+import { useRouter } from 'next/navigation';
 export default function PairingPage() {
     const {currentUser} = useAuth(); 
     const userId = currentUser?.id; 
+    const router = useRouter();
     // const [selectedMatch, setSelectedMatch] = useState<null | boolean>(null);
     const [matches, setMatches] = useState<unknown[]>([]);
 
-  //   const matches = [
-  //   {
-  //     id: 1,
-  //     name: "Maria García",
-  //     avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
-  //     nativeLanguage: "Spanish",
-  //     learningLanguage: "English",
-  //     level: "Intermediate",
-  //     rating: 4.8,
-  //     responseTime: "Usually responds in 2 hours",
-  //     location: "Madrid, Spain",
-  //     interests: ["Travel", "Music", "Cooking"],
-  //     matchPercentage: 95
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Jean-Pierre Dubois",
-  //     avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-  //     nativeLanguage: "French",
-  //     learningLanguage: "English",
-  //     level: "Advanced",
-  //     rating: 4.9,
-  //     responseTime: "Usually responds in 1 hour",
-  //     location: "Lyon, France",
-  //     interests: ["Literature", "Philosophy", "Wine"],
-  //     matchPercentage: 88
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Yuki Tanaka",
-  //     avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
-  //     nativeLanguage: "Japanese",
-  //     learningLanguage: "English",
-  //     level: "Beginner",
-  //     rating: 4.7,
-  //     responseTime: "Usually responds in 3 hours",
-  //     location: "Tokyo, Japan",
-  //     interests: ["Anime", "Technology", "Gaming"],
-  //     matchPercentage: 92
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "Alessandro Rossi",
-  //     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-  //     nativeLanguage: "Italian",
-  //     learningLanguage: "English",
-  //     level: "Intermediate",
-  //     rating: 4.6,
-  //     responseTime: "Usually responds in 4 hours",
-  //     location: "Rome, Italy",
-  //     interests: ["Art", "History", "Food"],
-  //     matchPercentage: 85
-  //   }
-  // ];
 
- useEffect(() => {
-  if (!currentUser?.id) {
-    console.warn("Skipping fetchMatches: no numeric DB id yet");
-    return;
-  }
-
-  const fetchMatches = async () => {
+useEffect(()=>{
+    const fetchMatches = async () => {
+     
     try {
+      if(!userId) return;
       const res = await axios.get(
         `/api/users/${userId}/matches`
       );
       setMatches(res.data || []);
       if (!res?.data || res.data.length === 0) {
-        console.warn("No matches found for user:", currentUser.id);
-        // setSelectedMatch(false); 
+        console.warn("No matches found for user:", userId); 
         return;
       }
 
-      // setSelectedMatch(true);
-      console.log(res);
+      console.log(res.data);
     } catch (err) {
       console.error("❌ Error fetching matches:", err);
     }
   };
 
   fetchMatches();
-}, [currentUser?.id]);
+}, [userId]);
 
 
-    const handleStartChat = (matchId:string) => {
-      // This would typically navigate to the chat page
-      console.log(`Starting chat with user ${matchId}`);
-      // In a real app: router.push(`/chat/${matchId}`)
+
+
+
+    const handleStartChat = async(matchId:string) => {
+      if(!userId || !matchId){
+        console.error("User ID or Match ID is missing.");
+        return;
+      }
+      try{
+          const user1_id = userId;
+          const user2_id = matchId;
+           console.log("Payload being sent:", { user1_id, user2_id });
+          const res = await axios.post("/api/chats",{
+            user1_id,
+            user2_id
+            
+      });
+      console.log("Chat Stared",res.data);
+      router.push('/chat')
+      }catch(err){ 
+        console.error("Error starting chat:", err);
+      }
+      // route to the chat page
+      router.push('/chat')
     }
 
   const getLevelColor = (level:string) => {
@@ -135,8 +98,8 @@ export default function PairingPage() {
               <div className="w-16 h-16 mx-auto border-4 border-dashed border-slate-300 dark:border-slate-600 rounded-full animate-pulse"></div>
             </div>
           ):(
-            matches.map((item)=>(
-              <div key={item.id ?? item.uid}
+            matches.map((match)=>(
+              <div key={match.id}
               className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50 p-6 hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-slate-900/50 transition-all duration-300 hover:scale-[1.02]"
               >
                   <div className="flex items-start gap-4">
@@ -155,7 +118,7 @@ export default function PairingPage() {
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-1">
-                        {item.name}
+                        {match.name}
                       </h3>
                       <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
                         <MapPin className="w-4 h-4" />
@@ -173,19 +136,19 @@ export default function PairingPage() {
                   <div className="flex items-center gap-4 mb-3">
                     <div className="flex items-center gap-2">
                       <Globe className="w-4 h-4 text-blue-500" />
-                      <span className="text-sm font-medium">Speaks: {item.speaks_language}</span>
+                      <span className="text-sm font-medium">Speaks: {match.speaks_language}</span>
                     </div>
                     <div className="text-slate-400">→</div>
                     <div className="flex items-center gap-2">
                       <Globe className="w-4 h-4 text-purple-500" />
-                      <span className="text-sm font-medium">Learning: {item.learning_language}</span>
+                      <span className="text-sm font-medium">Learning: {match.learning_language}</span>
                     </div>
                   </div>
 
                   {/* Level and Rating */}
                   <div className="flex items-center gap-4 mb-3">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getLevelColor(item.level)}`}>
-                      {item.level}
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getLevelColor(match.level)}`}>
+                      {match.level}
                     </span>
                     <div className="flex items-center gap-1">
                       <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
@@ -212,8 +175,9 @@ export default function PairingPage() {
                   </div>
 
                   {/* Action Button */}
+                  
                   <button
-                    // onClick={() => handleStartChat(match.id)}
+                    onClick={() => handleStartChat(match.match_id)}
                     className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-2.5 rounded-xl font-medium transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/25"
                   >
                     <MessageCircle className="w-4 h-4" />
