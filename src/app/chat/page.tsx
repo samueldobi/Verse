@@ -228,9 +228,9 @@ export default function ChatPage() {
             )}
           </div>
 
-          {/* --- Language row (from user_prefs join) --- */}
+          {/* --- Language row  --- */}
           <div className="flex items-center space-x-2 mb-2">
-            {/* you can replace these flag placeholders later */}
+            
             <span className="text-xs">{item.speaks_language || '🌍'}</span>
             <span className="text-xs">↔</span>
             <span className="text-xs">{item.learning_language || '🎯'}</span>
