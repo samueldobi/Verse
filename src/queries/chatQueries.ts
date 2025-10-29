@@ -30,6 +30,7 @@ export async function retrieveUserChats(user_id:string){
         u.id AS participant_id,
         u.name AS participant_name,
         u.email AS participant_email,
+        u.profile_image AS user_image,
         up.speaks_language,
         up.learning_language
         FROM chats c

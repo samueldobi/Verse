@@ -34,6 +34,7 @@ export async function matchLanguages(userId: string) {
       JOIN users u2 ON up2.user_id = u2.id   --  join on integer PK, not uid
       WHERE up1.user_id = $1                 --  compare using integer id
         AND up2.user_id <> up1.user_id;
+        
     `;
     const values = [userId];
     const result = await pool.query(matchLangQuery, values);

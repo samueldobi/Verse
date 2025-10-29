@@ -4,6 +4,7 @@ import ProtectedRoute from '@/components/protectedRoutes/protectedRoutes';
 import { Message, Friends } from '@/types/learnTypes';
 import axios from 'axios';
 import { useAuth } from '@/context/auth';
+import Image from 'next/image';
 
 export default function ChatPage() {
   const [selectedBuddy, setSelectedBuddy] = useState< Friends | null>(null);
@@ -123,7 +124,7 @@ export default function ChatPage() {
   };
 
   return (
-    <ProtectedRoute>
+    // <ProtectedRoute>
     <div className="h-screen bg-slate-50 dark:bg-slate-900 flex relative">
       {/* Mobile Overlay */}
       {showSidebar && selectedBuddy && (
@@ -204,9 +205,11 @@ export default function ChatPage() {
       <div className="flex items-center space-x-3">
         {/* --- Avatar placeholder (replace with item.avatar when available) --- */}
         <div className="relative">
-          <img
-            src={item.avatar || '/default-avatar.png'}
+          <Image
+            src={item.user_image || '/default-avatar.png'}
             alt={item.participant_name}
+            width={50}
+            height={50}
             className="w-12 h-12 rounded-full object-cover"
           />
           {/* Optional online indicator — if you ever add online status */}
@@ -333,6 +336,6 @@ export default function ChatPage() {
         )}
       </div>
     </div>
-    </ProtectedRoute>
+    // </ProtectedRoute>
   );
 }

@@ -3,9 +3,9 @@ import ProtectedRoute from '@/components/protectedRoutes/protectedRoutes';
 export default function Page(){
     return(
         <>
-         <ProtectedRoute>
+         {/* <ProtectedRoute> */}
             <LearnUi/>
-          </ProtectedRoute>
+          {/* </ProtectedRoute> */}
         </>
     )
 }
