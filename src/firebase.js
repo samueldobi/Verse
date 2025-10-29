@@ -5,6 +5,8 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
   sendPasswordResetEmail,
+  setPersistence, 
+  browserLocalPersistence 
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -20,8 +22,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth =  getAuth(app);
 
+
 export const register = async (email, username, password) => {
   try{
+    // Stop firebase from logging out on reload 
+    await setPersistence(auth, browserLocalPersistence); 
     const response = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(response.user, { displayName: username });
     return response.user;

@@ -12,10 +12,6 @@ export default function ChatPage() {
   const [showSidebar, setShowSidebar] = useState<boolean>(true);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [chatList, setChatList] =  useState<any[]>([]);
-
-
-
-
   // Get current user id
   const {currentUser } = useAuth();
   const userId = currentUser?.id;  
@@ -94,6 +90,7 @@ export default function ChatPage() {
         `api/chats?userId=${userId}`
         )
         setChatList(res.data.getChats);
+        console.log("this is the chat information",res.data.getChats)
       }catch(err){
         console.log("Failed to fetch chats", err)
       }
@@ -154,7 +151,7 @@ export default function ChatPage() {
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          {/* {buddies.map((buddy) => (
+          {buddies.map((buddy) => (
             <button
               key={buddy.id}
               onClick={() => {
@@ -186,17 +183,76 @@ export default function ChatPage() {
                 </div>
               </div>
             </button>
-          ))} */}
-            <div>
+          ))}
+            <div className="flex-1 overflow-y-auto">
           {chatList.length === 0 ? (
-            <p>No chats found</p>
-          ) : (
-            chatList.map((item) => (
-              <div key={item.chat_id}>
-                {item.participant_name}
-              </div>
-            ))
+  <p>No chats found</p>
+) : (
+  chatList.map((item) => (
+    <button
+      key={item.chat_id}
+      onClick={() => {
+        setSelectedBuddy(item);
+        setShowSidebar(false);
+      }}
+      className={`w-full p-4 text-left hover:bg-slate-50 dark:hover:bg-slate-700 transition-all border-b border-slate-100 dark:border-slate-700 ${
+        selectedBuddy?.chat_id === item.chat_id
+          ? 'bg-blue-50 dark:bg-blue-900/20 border-r-2 border-r-blue-500'
+          : ''
+      }`}
+    >
+      <div className="flex items-center space-x-3">
+        {/* --- Avatar placeholder (replace with item.avatar when available) --- */}
+        <div className="relative">
+          <img
+            src={item.avatar || '/default-avatar.png'}
+            alt={item.participant_name}
+            className="w-12 h-12 rounded-full object-cover"
+          />
+          {/* Optional online indicator — if you ever add online status */}
+          {item.online && (
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 border-2 border-white dark:border-slate-800 rounded-full"></div>
           )}
+        </div>
+
+        <div className="flex-1 min-w-0">
+          {/* --- Top row: Name + Unread count --- */}
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="font-semibold text-slate-900 dark:text-white truncate">
+              {item.participant_name}
+            </h3>
+            {item.unread > 0 && (
+              <div className="w-5 h-5 bg-blue-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                {item.unread}
+              </div>
+            )}
+          </div>
+
+          {/* --- Language row (from user_prefs join) --- */}
+          <div className="flex items-center space-x-2 mb-2">
+            {/* you can replace these flag placeholders later */}
+            <span className="text-xs">{item.speaks_language || '🌍'}</span>
+            <span className="text-xs">↔</span>
+            <span className="text-xs">{item.learning_language || '🎯'}</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 truncate">
+              {item.speaks_language || 'Unknown'} ↔ {item.learning_language || 'Unknown'}
+            </span>
+          </div>
+
+          {/* --- Last message placeholder --- */}
+          <p className="text-sm text-slate-600 dark:text-slate-400 truncate">
+            {item.last_message || 'No messages yet'}
+          </p>
+
+          {/* --- Last seen placeholder --- */}
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+            {item.last_seen || ''}
+          </p>
+        </div>
+      </div>
+    </button>
+  ))
+)}
 
     </div>
     </div>

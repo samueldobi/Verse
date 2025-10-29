@@ -24,16 +24,22 @@ export async function startChatSession( user1_id:string, user2_id:string){
 export async function retrieveUserChats(user_id:string){
     try{
         const retrieveChatsQuery = `
-         SELECT 
+        SELECT 
         c.id AS chat_id,
         c.created_at,
         u.id AS participant_id,
         u.name AS participant_name,
-        u.email AS participant_email
-      FROM chats c
-      JOIN chat_participants cp ON cp.chat_id = c.id
-      JOIN users u ON u.id = cp.user_id
-      WHERE c.id IN (
+        u.email AS participant_email,
+        up.speaks_language,
+        up.learning_language
+        FROM chats c
+        JOIN chat_participants cp 
+        ON cp.chat_id = c.id
+        JOIN users u 
+        ON u.id = cp.user_id
+        JOIN user_prefs up
+        ON up.user_id = u.id
+        WHERE c.id IN (
         SELECT chat_id 
         FROM chat_participants 
         WHERE user_id = $1

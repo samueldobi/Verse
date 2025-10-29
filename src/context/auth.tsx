@@ -27,7 +27,7 @@ useEffect(() => {
             username: user.displayName,
             id: dbUser.id,
             });
-            autoLogout(auth, 60 * 60 * 1000);
+            // autoLogout(auth, 60 * 60 * 1000);
         } catch (err) {
             console.error("❌ Failed to sync user with DB:", err);
             setCurrentUser({
