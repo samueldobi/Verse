@@ -75,15 +75,16 @@ export default function ChatPage() {
     ]
   };
 
-  useEffect(() => {
-    if (selectedBuddy) {
-      setMessages(prev => ({ ...prev, [selectedBuddy.id]: mockMessages[selectedBuddy.id] || [] }));
-    }
-  }, [selectedBuddy]);
+  // useEffect(() => {
+  //   if (selectedBuddy) {
+  //     setMessages(prev => ({ ...prev, [selectedBuddy.id]: mockMessages[selectedBuddy.id] || [] }));
+  //   }
+  // }, [selectedBuddy]);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, selectedBuddy]);
+  // Scroll to latest message in the chat view part
+  // useEffect(() => {
+  //   messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  // }, [messages, selectedBuddy]);
   useEffect(()=>{
     const fetchChats = async ()=>{
       try{
@@ -91,7 +92,7 @@ export default function ChatPage() {
         `api/chats?userId=${userId}`
         )
         setChatList(res.data.getChats);
-        console.log("this is the chat information",res.data.getChats)
+        // console.log("this is the chat information",res.data.getChats)
       }catch(err){
         console.log("Failed to fetch chats", err)
       }
@@ -99,7 +100,28 @@ export default function ChatPage() {
     fetchChats();
   }, [userId])
 
-  const handleSendMessage = ():void => {
+    const handleOpenChat = (item):void=>{
+     const formattedBuddy = {
+      id: item.chat_id,
+      name: item.participant_name,
+      avatar: item.user_image || '/default-avatar.png',
+      speaks: { code: '', name: item.speaks_language || 'Unknown', flag: '🌍' },
+      learning: { code: '', name: item.learning_language || 'Unknown', flag: '🎯' },
+      lastMessage: item.last_message || 'No messages yet',
+      lastSeen: item.last_seen || '',
+      online: false,
+      unread: item.unread || 0,
+    };
+    setSelectedBuddy(formattedBuddy)
+    setShowSidebar(false);
+    setMessages(prev => ({
+    ...prev,
+    [formattedBuddy.id]: []
+  }));
+  console.log(formattedBuddy)
+  }
+
+  const handleSendMessage = async ():Promise<void> => {
     if (!message.trim() || !selectedBuddy) return;
 
     const newMessage: Message = {
@@ -114,7 +136,57 @@ export default function ChatPage() {
       [selectedBuddy.id]: [...(prev[selectedBuddy.id] || []), newMessage]
     }));
     setMessage('');
+    // Api request 
+    try{
+      
+      const res = await axios.post(
+        `api/chats/${selectedBuddy.id}/messages`,{
+          chatId: selectedBuddy.id,
+          senderId: userId,
+          content: newMessage.text
+        }
+      )
+      console.log(res)
+    }catch(err){
+      console.log(err)
+    }
   };
+
+  const fetchMessages = async (chatId: number) => {
+  try {
+    const res = await axios.get(`/api/chats/${chatId}/messages`);
+    const data = res.data;
+    console.log(data)
+
+    if (data.messages) {
+      // Format backend data to match your frontend structure
+      const formattedMessages = data.messages.map((msg: any) => ({
+        id: msg.id,
+        sender: msg.sender_id === userId ? 'me' : msg.sender_name,
+        text: msg.content,
+        time: new Date(msg.created_at).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+      }));
+
+      setMessages((prev) => ({
+        ...prev,
+        [chatId]: formattedMessages,
+      }));
+    }
+  } catch (err) {
+    console.error("Error fetching messages:", err);
+  }
+};
+
+
+  // Load messages when a user selects a buddy
+  useEffect(() => {
+  if (selectedBuddy) {
+    fetchMessages(selectedBuddy.id);
+  }
+}, [selectedBuddy]);
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>): void  => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -122,6 +194,7 @@ export default function ChatPage() {
       handleSendMessage();
     }
   };
+  
 
   return (
     // <ProtectedRoute>
@@ -152,56 +225,22 @@ export default function ChatPage() {
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          {buddies.map((buddy) => (
-            <button
-              key={buddy.id}
-              onClick={() => {
-                setSelectedBuddy(buddy);
-                setShowSidebar(false);
-              }}
-              className={`w-full p-4 text-left hover:bg-slate-50 dark:hover:bg-slate-700 transition-all border-b border-slate-100 dark:border-slate-700 ${
-                selectedBuddy?.id === buddy.id ? 'bg-blue-50 dark:bg-blue-900/20 border-r-2 border-r-blue-500' : ''
-              }`}
-            >
-              <div className="flex items-center space-x-3">
-                <div className="relative">
-                  <img src={buddy.avatar} alt={buddy.name} className="w-12 h-12 rounded-full object-cover" />
-                  {buddy.online && <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 border-2 border-white dark:border-slate-800 rounded-full"></div>}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <h3 className="font-semibold text-slate-900 dark:text-white truncate">{buddy.name}</h3>
-                    {buddy.unread > 0 && <div className="w-5 h-5 bg-blue-500 text-white text-xs font-bold rounded-full flex items-center justify-center">{buddy.unread}</div>}
-                  </div>
-                  <div className="flex items-center space-x-2 mb-2">
-                    <span className="text-xs">{buddy.speaks.flag}</span>
-                    <span className="text-xs">↔</span>
-                    <span className="text-xs">{buddy.learning.flag}</span>
-                    <span className="text-xs text-slate-500 dark:text-slate-400">{buddy.speaks.name} ↔ {buddy.learning.name}</span>
-                  </div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 truncate">{buddy.lastMessage}</p>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{buddy.lastSeen}</p>
-                </div>
-              </div>
-            </button>
-          ))}
+          {/* This is where the buddies map component was  */}
+        
             <div className="flex-1 overflow-y-auto">
           {chatList.length === 0 ? (
   <p>No chats found</p>
-) : (
-  chatList.map((item) => (
-    <button
-      key={item.chat_id}
-      onClick={() => {
-        setSelectedBuddy(item);
-        setShowSidebar(false);
-      }}
-      className={`w-full p-4 text-left hover:bg-slate-50 dark:hover:bg-slate-700 transition-all border-b border-slate-100 dark:border-slate-700 ${
-        selectedBuddy?.chat_id === item.chat_id
-          ? 'bg-blue-50 dark:bg-blue-900/20 border-r-2 border-r-blue-500'
-          : ''
-      }`}
-    >
+        ) : (
+          chatList.map((item) => (
+            <button
+              key={item.chat_id}
+              onClick={() => {handleOpenChat(item)}}
+              className={`w-full p-4 text-left hover:bg-slate-50 dark:hover:bg-slate-700 transition-all border-b border-slate-100 dark:border-slate-700 ${
+                selectedBuddy?.chat_id === item.chat_id
+                  ? 'bg-blue-50 dark:bg-blue-900/20 border-r-2 border-r-blue-500'
+                  : ''
+              }`}
+            >
       <div className="flex items-center space-x-3">
         {/* --- Avatar placeholder (replace with item.avatar when available) --- */}
         <div className="relative">

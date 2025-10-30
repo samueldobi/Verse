@@ -55,3 +55,39 @@ export async function retrieveUserChats(user_id:string){
         throw err;
     }
 }
+// Fetch chat messages  between two users
+export async function getUserMessagesById(chatId:number){
+    try{
+        const retrieveMessagesQuery = `
+        SELECT m.id, 
+        m.sender_id, 
+        m.content, 
+        m.created_at, 
+        u.name AS sender_name
+        FROM messages m
+        JOIN users u ON u.id = m.sender_id 
+        WHERE m.chat_id = $1
+        ORDER BY m.created_at ASC;
+        `
+        const values = [chatId];
+        const results = await pool.query(retrieveMessagesQuery, values);
+        return results.rows;
+    }catch(err){
+        console.log("Error Retrieving chats by ID", err)
+    }
+}
+// Send messages between two users
+export async function sendMessages(chatId:number, senderId: number, content:string){
+    try{
+        const sendChatsQuery=`
+        INSERT INTO messages(chat_id, sender_id, content, created_at)
+        VALUES($1, $2, $3, NOW())
+        RETURNING  *
+        `;
+        const values = [ chatId, senderId, content];
+        const results = await pool.query(sendChatsQuery, values );
+        return results.rows[0];
+    }catch(err){
+        console.log("Error sending messages between two users", err)
+    }
+}
