@@ -1,10 +1,14 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
-import ProtectedRoute from '@/components/protectedRoutes/protectedRoutes';
+// import ProtectedRoute from '@/components/protectedRoutes/protectedRoutes';
 import { Message, Friends } from '@/types/learnTypes';
 import axios from 'axios';
 import { useAuth } from '@/context/auth';
 import Image from 'next/image';
+import {io} from "socket.io-client";
+
+// initializing the websocket
+// const socket = io("http://localhost:5000");
 
 export default function ChatPage() {
   const [selectedBuddy, setSelectedBuddy] = useState< Friends | null>(null);
@@ -16,75 +20,7 @@ export default function ChatPage() {
   // Get current user id
   const {currentUser } = useAuth();
   const userId = currentUser?.id;  
-  // Mock data for buddies
-  const buddies:Friends[] = [
-    {
-      id: 1,
-      name: 'Maria González',
-      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b217?w=150&h=150&fit=crop&crop=face',
-      speaks: { code: 'es', name: 'Spanish', flag: '🇪🇸' },
-      learning: { code: 'en', name: 'English', flag: '🇺🇸' },
-      lastMessage: 'Hola! How was your weekend?',
-      lastSeen: '2 min ago',
-      online: true,
-      unread: 2
-    },
-    {
-      id: 2,
-      name: 'Takeshi Yamamoto',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-      speaks: { code: 'ja', name: 'Japanese', flag: '🇯🇵' },
-      learning: { code: 'en', name: 'English', flag: '🇺🇸' },
-      lastMessage: 'Thanks for explaining American culture!',
-      lastSeen: '1 hour ago',
-      online: false,
-      unread: 0
-    },
-    {
-      id: 3,
-      name: 'Sophie Dubois',
-      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
-      speaks: { code: 'fr', name: 'French', flag: '🇫🇷' },
-      learning: { code: 'en', name: 'English', flag: '🇺🇸' },
-      lastMessage: 'Shall we practice pronunciation today?',
-      lastSeen: '5 hours ago',
-      online: false,
-      unread: 1
-    },
-    {
-      id: 4,
-      name: 'Ahmad Hassan',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-      speaks: { code: 'ar', name: 'Arabic', flag: '🇸🇦' },
-      learning: { code: 'en', name: 'English', flag: '🇺🇸' },
-      lastMessage: 'The cultural exchange was amazing!',
-      lastSeen: '1 day ago',
-      online: false,
-      unread: 0
-    }
-  ];
 
-  // Mock messages
-  const mockMessages: Record<number, Message[]> = {
-    1: [
-      { id: 1, sender: 'buddy', text: '¡Hola! How was your weekend?', time: '10:30 AM' },
-      { id: 2, sender: 'me', text: 'Hi Maria! It was great, I went hiking. How do you say "mountain" in Spanish?', time: '10:32 AM' },
-      { id: 3, sender: 'buddy', text: 'Montaña! 🏔️ I love hiking too.', time: '10:33 AM' },
-      { id: 4, sender: 'me', text: 'That sounds amazing! I\'d love to visit Spain someday.', time: '10:35 AM' },
-      { id: 5, sender: 'buddy', text: 'You should! I can show you around Barcelona. Your Spanish is improving! 🎉', time: '10:36 AM' }
-    ]
-  };
-
-  // useEffect(() => {
-  //   if (selectedBuddy) {
-  //     setMessages(prev => ({ ...prev, [selectedBuddy.id]: mockMessages[selectedBuddy.id] || [] }));
-  //   }
-  // }, [selectedBuddy]);
-
-  // Scroll to latest message in the chat view part
-  // useEffect(() => {
-  //   messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  // }, [messages, selectedBuddy]);
   useEffect(()=>{
     const fetchChats = async ()=>{
       try{
@@ -131,6 +67,12 @@ export default function ChatPage() {
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
+    // Emit to socket
+    socketRef.current.emit("send_message", {
+      chatId: selectedBuddy.id,
+      senderId: userId,
+      content: newMessage.text,
+    });
     setMessages(prev => ({
       ...prev,
       [selectedBuddy.id]: [...(prev[selectedBuddy.id] || []), newMessage]
@@ -180,11 +122,15 @@ export default function ChatPage() {
   }
 };
 
-
   // Load messages when a user selects a buddy
   useEffect(() => {
   if (selectedBuddy) {
     fetchMessages(selectedBuddy.id);
+  }
+}, [selectedBuddy]);
+useEffect(() => {
+  if (selectedBuddy && socketRef.current) {
+    socketRef.current.emit("join_chat", selectedBuddy.id);
   }
 }, [selectedBuddy]);
 
@@ -194,7 +140,29 @@ export default function ChatPage() {
       handleSendMessage();
     }
   };
-  
+  // Socket function 
+  const socketRef = useRef(null);
+
+useEffect(() => {
+    const socket = io("http://localhost:5000");
+    socketRef.current = socket;
+
+    socket.on("connect", () => {
+      console.log("🟢 Connected to socket:", socket.id);
+    });
+
+    socket.on("receive_message", (msg) => {
+      console.log("📩 New message received:", msg);
+      setMessages((prev) => ({
+        ...prev,
+        [msg.chatId]: [...(prev[msg.chatId] || []), msg]
+      }));
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+}, []);
 
   return (
     // <ProtectedRoute>
@@ -317,7 +285,12 @@ export default function ChatPage() {
                   >
                     <div className="w-5 h-5 border-2 border-current border-r-0 border-t-0 transform -rotate-45"></div>
                   </button>
-                  <img src={selectedBuddy.avatar} alt={selectedBuddy.name} className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover" />
+                  <Image
+                   src={selectedBuddy.avatar} 
+                   alt={selectedBuddy.name} 
+                   width={50}
+                   height={50}
+                   className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover" />
                   <div>
                     <h3 className="font-bold text-slate-900 dark:text-white">{selectedBuddy.name}</h3>
                     <p className="text-sm text-slate-600 dark:text-slate-400">{selectedBuddy.speaks.flag} {selectedBuddy.speaks.name} • {selectedBuddy.learning.flag} Learning {selectedBuddy.learning.name}</p>
