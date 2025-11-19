@@ -1,7 +1,7 @@
 export default function OverviewPage(){
     return(
         <>
-            <p>Hello</p>
+            <p className="p-2 mx-2">Hello</p>
         </>
     )
 }

@@ -21,12 +21,12 @@ const items = [
   },
   {
     title: "Overview",
-    url: "dashboard/overview",
+    url: "#",
     icon: Inbox,
   },
   {
     title: "Calendar",
-    url: "#",
+    url: "dashboard/calender",
     icon: Calendar,
   },
   {

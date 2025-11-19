@@ -1,7 +1,7 @@
 export default function OverviewPage(){
     return(
         <>
-        <p>hello</p>
+        <p>this is the overview page </p>
         </>
     )
 }

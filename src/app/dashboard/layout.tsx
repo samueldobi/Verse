@@ -5,6 +5,7 @@ export default function dashboardLayout({children} : {children: React.ReactNode}
     return(
         <>
             <SidebarProvider>
+                
             <AppSidebar />
                 <main>
                     <SidebarTrigger />
