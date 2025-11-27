@@ -2,14 +2,14 @@ import { NextResponse } from "next/server";
 import {  getUserByUid } from "@/queries/userQueries";
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 export async function GET(
  req: Request, 
  { params }: Props
 ) {
   try {
-    const {id} =  params;
+    const {id} = await  params;
     const userId =  id; 
     const user = await getUserByUid(userId); 
 

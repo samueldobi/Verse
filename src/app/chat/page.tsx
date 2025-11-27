@@ -1,22 +1,22 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 // import ProtectedRoute from '@/components/protectedRoutes/protectedRoutes';
-import { Message, Friends } from '@/types/learnTypes';
+import { Message } from '@/types/learnTypes';
 import axios from 'axios';
 import { useAuth } from '@/context/auth';
 import Image from 'next/image';
-import {io} from "socket.io-client";
-
+import {Socket, io} from "socket.io-client";
+import { RawMessage, Chat, Buddy } from '@/types/chatTypes';
 // initializing the websocket
 // const socket = io("http://localhost:5000");
 
 export default function ChatPage() {
-  const [selectedBuddy, setSelectedBuddy] = useState< Friends | null>(null);
+  const [selectedBuddy, setSelectedBuddy] = useState< Buddy | null>(null);
   const [message, setMessage] = useState<string>('');
   const [messages, setMessages] = useState<Record<number, Message[]>>({});
   const [showSidebar, setShowSidebar] = useState<boolean>(true);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const [chatList, setChatList] =  useState<any[]>([]);
+  const [chatList, setChatList] =  useState<Chat[]>([]);
   // Get current user id
   const {currentUser } = useAuth();
   const userId = currentUser?.id;  
@@ -28,6 +28,7 @@ export default function ChatPage() {
         `api/chats?userId=${userId}`
         )
         setChatList(res.data.getChats);
+        console.log("This is the chatlist:",res.data.getChats)
         // console.log("this is the chat information",res.data.getChats)
       }catch(err){
         console.log("Failed to fetch chats", err)
@@ -36,10 +37,10 @@ export default function ChatPage() {
     fetchChats();
   }, [userId])
 
-    const handleOpenChat = (item):void=>{
-     const formattedBuddy = {
-      id: item.chat_id,
-      name: item.participant_name,
+    const handleOpenChat = (item:Chat):void=>{
+     const formattedBuddy:Buddy = {
+      chat_id: item.chat_id,
+      name: item.participant_name ?? 'Unknown',
       avatar: item.user_image || '/default-avatar.png',
       speaks: { code: '', name: item.speaks_language || 'Unknown', flag: '🌍' },
       learning: { code: '', name: item.learning_language || 'Unknown', flag: '🎯' },
@@ -52,7 +53,7 @@ export default function ChatPage() {
     setShowSidebar(false);
     setMessages(prev => ({
     ...prev,
-    [formattedBuddy.id]: []
+    [formattedBuddy.chat_id]: []
   }));
   console.log(formattedBuddy)
   }
@@ -68,22 +69,22 @@ export default function ChatPage() {
     };
 
     // Emit to socket
-    socketRef.current.emit("send_message", {
-      chatId: selectedBuddy.id,
+    socketRef.current?.emit("send_message", {
+      chatId: selectedBuddy.chat_id,
       senderId: userId,
       content: newMessage.text,
     });
     setMessages(prev => ({
       ...prev,
-      [selectedBuddy.id]: [...(prev[selectedBuddy.id] || []), newMessage]
+      [selectedBuddy.chat_id]: [...(prev[selectedBuddy.chat_id] || []), newMessage]
     }));
     setMessage('');
     // Api request 
     try{
       
       const res = await axios.post(
-        `api/chats/${selectedBuddy.id}/messages`,{
-          chatId: selectedBuddy.id,
+        `api/chats/${selectedBuddy.chat_id}/messages`,{
+          chatId: selectedBuddy.chat_id,
           senderId: userId,
           content: newMessage.text
         }
@@ -102,7 +103,7 @@ export default function ChatPage() {
 
     if (data.messages) {
       // Format backend data to match your frontend structure
-      const formattedMessages = data.messages.map((msg: any) => ({
+      const formattedMessages:Message[] = data.messages.map((msg: RawMessage) => ({
         id: msg.id,
         sender: msg.sender_id === userId ? 'me' : msg.sender_name,
         text: msg.content,
@@ -125,12 +126,12 @@ export default function ChatPage() {
   // Load messages when a user selects a buddy
   useEffect(() => {
   if (selectedBuddy) {
-    fetchMessages(selectedBuddy.id);
+    fetchMessages(selectedBuddy.chat_id);
   }
 }, [selectedBuddy]);
 useEffect(() => {
   if (selectedBuddy && socketRef.current) {
-    socketRef.current.emit("join_chat", selectedBuddy.id);
+    socketRef.current.emit("join_chat", selectedBuddy.chat_id);
   }
 }, [selectedBuddy]);
 
@@ -141,7 +142,7 @@ useEffect(() => {
     }
   };
   // Socket function 
-  const socketRef = useRef(null);
+  const socketRef = useRef<Socket | null>(null);
 
 useEffect(() => {
     const socket = io("http://localhost:5000");
@@ -181,7 +182,8 @@ useEffect(() => {
           <div>
             <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Chats </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              {buddies.filter(b => b.online).length} online now
+              {/* {buddies.filter(b => b.online).length}  */}
+              online now
             </p>
           </div>
           <button onClick={() => setShowSidebar(false)} className="md:hidden p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg">
@@ -231,7 +233,7 @@ useEffect(() => {
             <h3 className="font-semibold text-slate-900 dark:text-white truncate">
               {item.participant_name}
             </h3>
-            {item.unread > 0 && (
+            {(item.unread ?? 0) > 0 && (
               <div className="w-5 h-5 bg-blue-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
                 {item.unread}
               </div>
@@ -301,7 +303,7 @@ useEffect(() => {
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-slate-50 dark:bg-slate-900">
-              {(messages[selectedBuddy.id] || []).map((msg) => (
+              {(messages[selectedBuddy.chat_id] || []).map((msg) => (
                 <div key={msg.id} className={`flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-xs md:max-w-sm lg:max-w-md space-y-1 ${msg.sender === 'me' ? 'text-right' : 'text-left'}`}>
                     <div className={`inline-block px-3 py-2 md:px-4 md:py-3 rounded-2xl shadow-sm ${

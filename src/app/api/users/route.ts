@@ -1,15 +1,18 @@
 import { NextResponse } from "next/server";
 import { getUserByUid, addUser } from "@/queries/userQueries";
-// import { pool } from "@/lib/verse_db";
 import admin from "@/lib/firebaseAdmin";
 
 
 export async function GET(
-  req: Request,
-  { params }: { params: { uid: string } }
+  req: Request
 ) {
   try {
-    const user = await getUserByUid(params.uid);
+    const { searchParams } = new URL(req.url);
+    const uid = searchParams.get("uid");
+    if (!uid) {
+      return NextResponse.json({ error: "Missing UID parameter" }, { status: 400 });
+    }
+      const user = await getUserByUid(uid);
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }

@@ -4,12 +4,13 @@ import {pool} from "@/lib/verse_db";
 
 export async function POST(
     request: Request, 
-    context: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
 )
  {
     try{
         const { speaks_language, learning_language} = await request.json();
-        const { id:firebaseUid } = await context.params; 
+        const params = await context.params;
+        const { id:firebaseUid } = params ; 
         // const user_id = id;
         const userResult = await pool.query(
             "SELECT id FROM users WHERE uid = $1",

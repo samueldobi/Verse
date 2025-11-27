@@ -1,10 +1,11 @@
-import {Server} from "socket.io";
+import {Server as SocketServer} from "socket.io";
+import type { Server as HTTPServer } from "http";
 
-let io: Server | null = null;
+let io: SocketServer | null = null;
 
-export function getSocketServer(server: any) {
+export function getSocketServer(server: HTTPServer) {
   if (!io) {
-    io = new Server(server, {
+    io = new SocketServer(server, {
       cors: {
         origin: "*",
       },
@@ -14,15 +15,15 @@ export function getSocketServer(server: any) {
       console.log("🟢 User connected:", socket.id);
 
       // When a user joins a chat room
-      socket.on("joinRoom", (chatId) => {
+      socket.on("joinRoom", (chatId:string) => {
         socket.join(chatId);
         console.log(`User ${socket.id} joined room ${chatId}`);
       });
 
       // When a user sends a message
-      socket.on("sendMessage", (messageData) => {
+      socket.on("sendMessage", (messageData : { chatId: string; content: string }) => {
         // Broadcast message to everyone in the same chat
-        io.to(messageData.chatId).emit("receiveMessage", messageData);
+        io!.to(messageData.chatId).emit("receiveMessage", messageData);
       });
 
       socket.on("disconnect", () => {

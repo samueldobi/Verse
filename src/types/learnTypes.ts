@@ -21,9 +21,10 @@ export type Message = {
   time: string;
 };
 export type Match =  {
-  match_id: number;
+  match_id: string;
   match_uid: string;
   name: string;
   speaks_language: string;
   learning_language: string;
+  level:string;
 }
