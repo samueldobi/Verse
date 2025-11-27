@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getUserByUid, addUser } from "@/queries/userQueries";
-import admin from "@/lib/firebaseAdmin";
+import {firebaseAdminApp}  from "@/lib/firebaseAdmin";
 
 
 export async function GET(
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing UID" }, { status: 400 });
     }
     // 1. Fetch user details from Firebase
-    const fireBaseUser = await admin.auth().getUser(uid);
+    const fireBaseUser = await firebaseAdminApp.auth().getUser(uid);
     const email = fireBaseUser.email as string;
     const displayName = fireBaseUser.displayName as string;
     const newUser = await addUser(uid, email, displayName)
