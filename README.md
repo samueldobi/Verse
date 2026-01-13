@@ -1,23 +1,23 @@
-#  Verse 🌍🗣️  
+#  Verse 
 *A language exchange platform where learners connect, practice, and grow together.*  
 
-## 📌 Overview  
+##  Overview  
 Project Verse is a web application that enables people learning one language  to connect with people learning another language  for real-time language exchange.  
 It is built to promote **cultural exchange, inclusivity, and accessible learning** through simple, user-friendly digital tools.  
 
 ---
 
-## ⚡ Features  
-- 🔐 **Authentication with Firebase** – Secure login/registration (/Email).  
-- 🌍 **Language Matching** – Connects learners based on their target and native languages.  
-- 💬 **Exchange Interface** – Chat system for practicing languages.  
-- 📚 **User Profiles** – Learners can specify their skills, learning goals, and availability.  
-- 🗄️ **PostgreSQL Database** – Stores users, preferences, and exchange history.  
-- 📱 **Responsive UI** – Built with Next.js for smooth navigation across devices.  
+##  Features  
+-  **Authentication with Firebase** – Secure login/registration (/Email).  
+-  **Language Matching** – Connects learners based on their target and native languages.  
+-  **Exchange Interface** – Chat system for practicing languages.  
+-  **User Profiles** – Learners can specify their skills, learning goals, and availability.  
+-  **PostgreSQL Database** – Stores users, preferences, and exchange history.  
+-  **Responsive UI** – Built with Next.js for smooth navigation across devices.  
 
 ---
 
-## 🛠️ Tech Stack  
+##  Tech Stack  
 - **Frontend & Backend Framework:** Next.js
 - **Database:** PostgreSQL
 - **Authentication:** Firebase Authentication
@@ -58,7 +58,7 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_firebase_app_id
 
 
-📂 Project Structure
+ Project Structure
 project-verse/
 │── public/ # Static assets (images, icons, fonts, )
 │── scripts/ # Utility scripts for testing, setup, or automation
