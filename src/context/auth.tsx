@@ -1,59 +1,78 @@
 "use client";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { createContext, useContext, useEffect, useState} from "react";
-import { auth } from "@/firebase";
-import {  AuthContextType, AuthUser } from "@/types/authTypes";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { AuthContextType, AuthUser } from "@/types/authTypes";
+import axios from "axios";
 
+const noop = async () => undefined as unknown;
 
 export const AuthContext = createContext<AuthContextType>({
-    currentUser: null,
+  currentUser: null,
+  login: noop,
+  register: noop,
+  logout: () => {},
 });
-export const useAuth = ()=>{
-    return useContext(AuthContext)
-} 
-export const AuthProvider = ({children}:{ children: React.ReactNode })=>{
-    const [currentUser, setCurrentUser] =  useState<AuthUser | null>(null);
-useEffect(() => {
-  const unsubscribe = onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      try {
-            const res = await fetch(`/api/users/${user.uid}`);
-            if (!res.ok) throw new Error("Failed to fetch DB user");
 
-            const dbUser = await res.json();
-            setCurrentUser({
-            uid: user.uid,
-            email: user.email,
-            username: user.displayName,
-            id: dbUser.id,
-            });
-            // autoLogout(auth, 60 * 60 * 1000);
-        } catch (err) {
-            console.error("❌ Failed to sync user with DB:", err);
-            setCurrentUser({
-            uid: user.uid,
-            email: user.email,
-            username: user.displayName,
-            id: null,
-            });
-        }
-        } else {
-        setCurrentUser(null);
-        }
-    });
+export const useAuth = () => useContext(AuthContext);
 
-    return () => unsubscribe();
-    }, []);
-    return(
-        <AuthContext.Provider value={{currentUser}}>
-            {children}
-        </AuthContext.Provider>
-    );
-};
-function autoLogout(auth: typeof import("@/firebase").auth, timeoutMs: number) {
-  setTimeout(() => {
-    signOut(auth).then(() => {
-      console.log("⏳ User logged out due to timeout");
-    });
-  }, timeoutMs);
+function getToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("verse_token");
 }
+
+function setToken(token: string | null) {
+  if (!token) {
+    localStorage.removeItem("verse_token");
+  } else {
+    localStorage.setItem("verse_token", token);
+  }
+}
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
+
+  const fetchUser = useCallback(async () => {
+    const token = getToken();
+    if (!token) {
+      setCurrentUser(null);
+      return;
+    }
+    try {
+      const res = await axios.get("/api/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCurrentUser(res.data);
+    } catch {
+      setToken(null);
+      setCurrentUser(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
+  const login = async (email: string, password: string) => {
+    const res = await axios.post("/api/auth/login", { email, password });
+    setToken(res.data.token);
+    setCurrentUser(res.data.user);
+    return res.data;
+  };
+
+  const register = async (name: string, email: string, password: string) => {
+    const res = await axios.post("/api/auth/register", { name, email, password });
+    setToken(res.data.token);
+    setCurrentUser(res.data.user);
+    return res.data;
+  };
+
+  const logout = () => {
+    setToken(null);
+    setCurrentUser(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ currentUser, login, register, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

@@ -1,14 +1,19 @@
-import { footerLinks, languages} from "@/data/data"
-export default function Footer(){
-    return(
-        <>        
+import { footerLinks, languages } from "@/data/data"
+
+const socials = [
+  { name: "Twitter", bg: "hover:bg-blue-500", initial: "T" },
+  { name: "Instagram", bg: "hover:bg-pink-500", initial: "I" },
+  { name: "LinkedIn", bg: "hover:bg-blue-600", initial: "L" },
+  { name: "YouTube", bg: "hover:bg-red-500", initial: "Y" },
+  { name: "TikTok", bg: "hover:bg-black", initial: "T" },
+];
+
+export default function Footer() {
+  return (
     <footer className="bg-slate-900 dark:bg-slate-950 text-slate-300">
-      {/* Main Footer Content */}
       <div className="px-6 py-16">
         <div className="max-w-7xl mx-auto">
-          {/* Top Section */}
-          <div className="grid lg:grid-cols-5 gap-12 mb-12">
-            {/* Brand Column */}
+          <div className="grid lg:grid-cols-6 gap-10 mb-12">
             <div className="lg:col-span-2 space-y-6">
               <div className="flex items-center space-x-2">
                 <div className="relative">
@@ -17,49 +22,36 @@ export default function Footer(){
                   </div>
                   <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-slate-900 animate-pulse"></div>
                 </div>
-                <div className="text-2xl font-bold text-white">
-                  Verse
-                </div>
+                <div className="text-2xl font-bold text-white">Verse</div>
               </div>
-              
-              <p className="text-slate-400 leading-relaxed max-w-md">
-                Connect with real people to learn languages through culture. Build friendships, 
+              <p className="text-slate-400 leading-relaxed max-w-sm">
+                Connect with real people to learn languages through culture. Build friendships,
                 share experiences, and discover the world one conversation at a time.
               </p>
-
-              {/* Popular Languages */}
               <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">
+                <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
                   Popular Languages
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {languages.map((lang, index) => (
+                  {languages.slice(0, 6).map((lang, index) => (
                     <button
                       key={index}
-                      className="flex items-center space-x-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-all duration-200 hover:scale-105 group"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg transition-all duration-200 text-sm text-slate-300 hover:text-white"
                     >
-                      <span className="text-sm group-hover:scale-110 transition-transform">
-                        {lang.flag}
-                      </span>
-                      <span className="text-sm text-slate-300 group-hover:text-white">
-                        {lang.name}
-                      </span>
+                      <span>{lang.flag}</span>
+                      <span>{lang.name}</span>
                     </button>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* Product Links */}
-            <div className="space-y-4">
-              <h3 className="text-white font-semibold text-lg">Product</h3>
+            <div>
+              <h3 className="text-white font-semibold mb-5">Product</h3>
               <ul className="space-y-3">
                 {footerLinks.product.map((link) => (
                   <li key={link.name}>
-                    <a 
-                      href={link.href}
-                      className="text-slate-400 hover:text-white transition-colors duration-200 hover:translate-x-1 transform inline-block"
-                    >
+                    <a href={link.href} className="text-slate-400 hover:text-white transition-colors duration-200 text-sm">
                       {link.name}
                     </a>
                   </li>
@@ -67,16 +59,12 @@ export default function Footer(){
               </ul>
             </div>
 
-            {/* Community Links */}
-            <div className="space-y-4">
-              <h3 className="text-white font-semibold text-lg">Community</h3>
+            <div>
+              <h3 className="text-white font-semibold mb-5">Community</h3>
               <ul className="space-y-3">
                 {footerLinks.community.map((link) => (
                   <li key={link.name}>
-                    <a 
-                      href={link.href}
-                      className="text-slate-400 hover:text-white transition-colors duration-200 hover:translate-x-1 transform inline-block"
-                    >
+                    <a href={link.href} className="text-slate-400 hover:text-white transition-colors duration-200 text-sm">
                       {link.name}
                     </a>
                   </li>
@@ -84,101 +72,78 @@ export default function Footer(){
               </ul>
             </div>
 
-            {/* Support & Company Links */}
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <h3 className="text-white font-semibold text-lg">Support</h3>
-                <ul className="space-y-3">
-                  {footerLinks.support.map((link) => (
-                    <li key={link.name}>
-                      <a 
-                        href={link.href}
-                        className="text-slate-400 hover:text-white transition-colors duration-200 hover:translate-x-1 transform inline-block"
-                      >
-                        {link.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            <div>
+              <h3 className="text-white font-semibold mb-5">Support</h3>
+              <ul className="space-y-3">
+                {footerLinks.support.map((link) => (
+                  <li key={link.name}>
+                    <a href={link.href} className="text-slate-400 hover:text-white transition-colors duration-200 text-sm">
+                      {link.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-              <div className="space-y-4">
-                <h3 className="text-white font-semibold text-lg">Company</h3>
-                <ul className="space-y-3">
-                  {footerLinks.company.map((link) => (
-                    <li key={link.name}>
-                      <a 
-                        href={link.href}
-                        className="text-slate-400 hover:text-white transition-colors duration-200 hover:translate-x-1 transform inline-block"
-                      >
-                        {link.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            <div>
+              <h3 className="text-white font-semibold mb-5">Company</h3>
+              <ul className="space-y-3">
+                {footerLinks.company.map((link) => (
+                  <li key={link.name}>
+                    <a href={link.href} className="text-slate-400 hover:text-white transition-colors duration-200 text-sm">
+                      {link.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
 
-          {/* Newsletter Signup */}
-          <div className="mb-12 p-8 bg-slate-800 dark:bg-slate-900/50 rounded-2xl border border-slate-700 relative overflow-hidden">
-            <div className="absolute inset-0 bg-blue-600/5"></div>
+          <div className="mb-12 p-8 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-purple-500/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
             <div className="relative z-10 max-w-2xl">
-              <h3 className="text-xl font-bold text-white mb-2">
-                Stay Connected
-              </h3>
-              <p className="text-slate-400 mb-6">
+              <h3 className="text-xl font-bold text-white mb-2">Stay Connected</h3>
+              <p className="text-slate-400 mb-6 text-sm">
                 Get weekly cultural insights, language tips, and community highlights delivered to your inbox.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <input
                   type="email"
                   placeholder="Enter your email address"
-                  className="flex-1 px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  className="flex-1 px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
                 />
-                <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-lg whitespace-nowrap">
+                <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg whitespace-nowrap text-sm">
                   Subscribe
                 </button>
               </div>
             </div>
-            <div className="absolute top-4 right-4 w-16 h-16 bg-blue-500/10 rounded-full"></div>
-            <div className="absolute bottom-4 right-12 w-8 h-8 bg-purple-500/10 rounded-full"></div>
           </div>
 
-          {/* Social & Stats Section */}
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            {/* Social Media */}
+          <div className="grid md:grid-cols-2 gap-8">
             <div className="space-y-4">
-              <h4 className="text-white font-semibold">Follow Us</h4>
-              <div className="flex space-x-4">
-                {[
-                  { name: 'Twitter', color: 'hover:bg-blue-500' },
-                  { name: 'Instagram', color: 'hover:bg-pink-500' },
-                  { name: 'LinkedIn', color: 'hover:bg-blue-600' },
-                  { name: 'YouTube', color: 'hover:bg-red-500' },
-                  { name: 'TikTok', color: 'hover:bg-black' }
-                ].map((social) => (
+              <h4 className="text-white font-semibold text-sm">Follow Us</h4>
+              <div className="flex gap-3">
+                {socials.map((s) => (
                   <button
-                    key={social.name}
-                    className={`w-12 h-12 bg-slate-800 hover:bg-slate-700 ${social.color} rounded-xl transition-all duration-200 hover:scale-110 hover:shadow-lg flex items-center justify-center group`}
+                    key={s.name}
+                    className={`w-10 h-10 bg-slate-800 ${s.bg} rounded-xl transition-all duration-200 hover:scale-110 flex items-center justify-center text-xs font-bold text-slate-400 hover:text-white`}
                   >
-                    <div className="w-5 h-5 bg-slate-400 group-hover:bg-white rounded-sm"></div>
+                    {s.initial}
                   </button>
                 ))}
               </div>
             </div>
-
-            {/* Live Stats */}
             <div className="space-y-4">
-              <h4 className="text-white font-semibold">Live Community</h4>
+              <h4 className="text-white font-semibold text-sm">Live Community</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-slate-800 p-4 rounded-xl">
                   <div className="text-2xl font-bold text-green-400">1,247</div>
-                  <div className="text-sm text-slate-400">Online Now</div>
+                  <div className="text-xs text-slate-400">Online Now</div>
                 </div>
                 <div className="bg-slate-800 p-4 rounded-xl">
                   <div className="text-2xl font-bold text-blue-400">89K</div>
-                  <div className="text-sm text-slate-400">Conversations Today</div>
+                  <div className="text-xs text-slate-400">Conversations Today</div>
                 </div>
               </div>
             </div>
@@ -186,18 +151,16 @@ export default function Footer(){
         </div>
       </div>
 
-      {/* Bottom Section */}
       <div className="border-t border-slate-800 px-6 py-6">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-slate-400 text-sm">
-            © 2025 Verse. Made with ❤️ for language learners worldwide.
+            &copy; 2025 Verse. Made with love for language learners worldwide.
           </div>
-          
-          <div className="flex items-center space-x-6 text-sm">
-            <button className="text-slate-400 hover:text-white transition-colors">
-              🌐 English
+          <div className="flex items-center gap-6 text-sm">
+            <button className="text-slate-400 hover:text-white transition-colors flex items-center gap-1">
+              <span className="text-base">🌐</span> English
             </button>
-            <div className="flex items-center space-x-2 text-slate-500">
+            <div className="flex items-center gap-2 text-slate-500">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
               <span>All systems operational</span>
             </div>
@@ -205,6 +168,5 @@ export default function Footer(){
         </div>
       </div>
     </footer>
-        </>
-    )
+  );
 }

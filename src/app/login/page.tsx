@@ -1,13 +1,14 @@
 "use client";
 import React, { useState } from 'react';
-import {register, login } from "@/firebase";
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/auth';
 import { FormData, FormErrors } from '@/types/loginTypes';
-import axios from 'axios';
+import { Globe, Target, Rocket } from "lucide-react";
 
 export default function AuthPage() {
 
-  const router =  useRouter();
+  const router = useRouter();
+  const { login, register } = useAuth();
   const [isLogin, setIsLogin] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
@@ -20,7 +21,7 @@ export default function AuthPage() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const validateForm = ():boolean => {
+  const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
     if (!formData.email) {
@@ -50,71 +51,36 @@ export default function AuthPage() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-// error messages
-const getFriendlyError = (code: string) => {
-  switch (code) {
-    case 'auth/invalid-credential':
-      return 'Invalid credentials. Please check your email and password.';
-    case 'auth/user-not-found':
-      return 'No account found with this email.';
-    case 'auth/email-already-in-use':
-      return 'This email is already in use';
-    case 'auth/wrong-password':
-      return 'Incorrect password.';
-    default:
-      return 'Something went wrong. Please try again.';
-  }
-};
 
- const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-  e.preventDefault();
-  const { name, email, password } = formData;
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const { name, email, password } = formData;
 
-  if (!validateForm()) return;
-  setIsLoading(true);
+    if (!validateForm()) return;
+    setIsLoading(true);
+    setErrorMessage(null);
 
-  if (isLogin) {
     try {
-      const userCredential = await login(email, password);
-      router.push("/learn");
-    } catch (err: unknown) {
-      setIsLoading(false);
-      console.error(err);
-
-      if (err && typeof err === "object" && "code" in err) {
-        // Firebase-style error with a 'code' property
-        setErrorMessage(getFriendlyError((err as { code: string }).code));
-      } else if (err instanceof Error) {
-        // Generic JS error
-        setErrorMessage(err.message);
+      if (isLogin) {
+        await login(email, password);
+        router.push("/learn");
       } else {
-        setErrorMessage("An unexpected error occurred");
+        await register(name, email, password);
+        router.push("/learn");
       }
-    }
-  } else {
-    try {
-      await register(email, name, password);
-      const userID = (await login(email, password)).user.uid;
-      await axios.post("/api/users", { 
-        uid: userID,
-        name,
-        email,
-       });
-      router.push("/");
+      setIsLoading(false);
     } catch (err: unknown) {
       setIsLoading(false);
-      console.error(err);
-
-      if (err && typeof err === "object" && "code" in err) {
-        setErrorMessage(getFriendlyError((err as { code: string }).code));
+      if (err && typeof err === "object" && "response" in err) {
+        const axiosErr = err as { response?: { data?: { error?: string } } };
+        setErrorMessage(axiosErr.response?.data?.error || "Something went wrong");
       } else if (err instanceof Error) {
         setErrorMessage(err.message);
       } else {
         setErrorMessage("An unexpected error occurred");
       }
     }
-  }
-};
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -122,17 +88,14 @@ const getFriendlyError = (code: string) => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
-    // Clear error when user starts typing
     if (errors[name as keyof FormData]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
-  
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
       <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center">
-        {/* Left Side - Branding & Info */}
         <div className="hidden lg:block space-y-8">
           <div className="space-y-6">
             <div className="flex items-center space-x-3">
@@ -158,11 +121,10 @@ const getFriendlyError = (code: string) => {
             </div>
           </div>
 
-          {/* Feature Highlights */}
           <div className="space-y-6">
             <div className="flex items-start space-x-4">
               <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                <span className="text-blue-600 dark:text-blue-400 text-lg">🌍</span>
+                <Globe className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
                 <h3 className="font-semibold text-slate-900 dark:text-white mb-1">Global Community</h3>
@@ -172,7 +134,7 @@ const getFriendlyError = (code: string) => {
 
             <div className="flex items-start space-x-4">
               <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                <span className="text-green-600 dark:text-green-400 text-lg">🎯</span>
+                <Target className="w-5 h-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
                 <h3 className="font-semibold text-slate-900 dark:text-white mb-1">Cultural Learning</h3>
@@ -182,7 +144,7 @@ const getFriendlyError = (code: string) => {
 
             <div className="flex items-start space-x-4">
               <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                <span className="text-purple-600 dark:text-purple-400 text-lg">🚀</span>
+                <Rocket className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               </div>
               <div>
                 <h3 className="font-semibold text-slate-900 dark:text-white mb-1">Fast Progress</h3>
@@ -191,7 +153,6 @@ const getFriendlyError = (code: string) => {
             </div>
           </div>
 
-          {/* Social Proof */}
           <div className="flex items-center space-x-8 pt-8 border-t border-slate-200 dark:border-slate-700">
             <div className="text-center">
               <div className="text-2xl font-bold text-slate-900 dark:text-white">50K+</div>
@@ -208,10 +169,8 @@ const getFriendlyError = (code: string) => {
           </div>
         </div>
 
-        {/* Right Side - Auth Form */}
         <div className="w-full max-w-md mx-auto lg:mx-0">
           <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-            {/* Mobile Logo */}
             <div className="lg:hidden p-6 text-center border-b border-slate-200 dark:border-slate-700">
               <div className="flex items-center justify-center space-x-2 mb-2">
                 <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -222,56 +181,25 @@ const getFriendlyError = (code: string) => {
               <p className="text-sm text-slate-600 dark:text-slate-400">Learn languages through culture</p>
             </div>
 
-            {/* Form Header */}
             <div className="p-6 pb-0">
               <div className="text-center space-y-2 mb-8">
                 <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
                   {isLogin ? 'Welcome Back!' : 'Join Verse Today'}
                 </h2>
                 <p className="text-slate-600 dark:text-slate-400">
-                  {isLogin 
+                  {isLogin
                     ? 'Continue your language learning journey'
                     : 'Start connecting with language partners worldwide'
                   }
                 </p>
               </div>
 
-              {/* Social Login Buttons */}
-              <div className="space-y-3 mb-6">
-                <button 
-                  // onClick={() => handleSocialAuth('Google')}
-                  className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 flex items-center justify-center space-x-3 group"
-                >
-                  <div className="w-5 h-5 bg-red-500 rounded-sm group-hover:scale-110 transition-transform"></div>
-                  <span className="text-slate-700 dark:text-slate-300 font-medium">Continue with Google</span>
-                </button>
-                <button 
-                  // onClick={() => handleSocialAuth('Facebook')}
-                  className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 flex items-center justify-center space-x-3 group"
-                >
-                  <div className="w-5 h-5 bg-blue-600 rounded-sm group-hover:scale-110 transition-transform"></div>
-                  <span className="text-slate-700 dark:text-slate-300 font-medium">Continue with Facebook</span>
-                </button>
-              </div>
 
-              {/* Divider */}
-              <div className="relative mb-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-300 dark:border-slate-600"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400">
-                    Or continue with email
-                  </span>
-                </div>
-              </div>
             </div>
 
-            {/* Form Fields */}
             <div className="p-6 pt-0 space-y-4">
-              {/* Name Field (Signup only) */}
-              { errorMessage && 
-              <div className='text-red-400 mt-2'>{errorMessage}</div>}
+              {errorMessage &&
+                <div className='text-red-400 mt-2'>{errorMessage}</div>}
               {!isLogin && (
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -293,7 +221,6 @@ const getFriendlyError = (code: string) => {
                 </div>
               )}
 
-              {/* Email Field */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                   Email Address
@@ -313,7 +240,6 @@ const getFriendlyError = (code: string) => {
                 )}
               </div>
 
-              {/* Password Field */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                   Password
@@ -333,7 +259,6 @@ const getFriendlyError = (code: string) => {
                 )}
               </div>
 
-              {/* Confirm Password (Signup only) */}
               {!isLogin && (
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -355,7 +280,6 @@ const getFriendlyError = (code: string) => {
                 </div>
               )}
 
-              {/* Terms Agreement (Signup only) */}
               {!isLogin && (
                 <div className="flex items-start space-x-3">
                   <input
@@ -379,7 +303,6 @@ const getFriendlyError = (code: string) => {
                 </div>
               )}
 
-              {/* Forgot Password (Login only) */}
               {isLogin && (
                 <div className="text-right">
                   <a href="#" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
@@ -388,7 +311,6 @@ const getFriendlyError = (code: string) => {
                 </div>
               )}
 
-              {/* Submit Button */}
               <button
                 onClick={handleSubmit}
                 disabled={isLoading}
@@ -409,7 +331,6 @@ const getFriendlyError = (code: string) => {
               </button>
             </div>
 
-            {/* Switch Auth Mode */}
             <div className="p-6 pt-0 text-center">
               <p className="text-slate-600 dark:text-slate-400 text-sm">
                 {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
@@ -427,7 +348,6 @@ const getFriendlyError = (code: string) => {
             </div>
           </div>
 
-          {/* Trust Indicators */}
           <div className="mt-6 flex items-center justify-center space-x-6 text-sm text-slate-500 dark:text-slate-400">
             <div className="flex items-center space-x-1">
               <div className="w-2 h-2 bg-green-400 rounded-full"></div>

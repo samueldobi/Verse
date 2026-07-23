@@ -1,26 +1,26 @@
-#  Verse 
-*A language exchange platform where learners connect, practice, and grow together.*  
+# Verse
+*A language exchange platform where learners connect, practice, and grow together.*
 
-##  Overview  
-Project Verse is a web application that enables people learning one language  to connect with people learning another language  for real-time language exchange.  
-It is built to promote **cultural exchange, inclusivity, and accessible learning** through simple, user-friendly digital tools.  
-
----
-
-##  Features  
--  **Authentication with Firebase** – Secure login/registration (/Email).  
--  **Language Matching** – Connects learners based on their target and native languages.  
--  **Exchange Interface** – Chat system for practicing languages.  
--  **User Profiles** – Learners can specify their skills, learning goals, and availability.  
--  **PostgreSQL Database** – Stores users, preferences, and exchange history.  
--  **Responsive UI** – Built with Next.js for smooth navigation across devices.  
+## Overview
+Project Verse is a web application that enables people learning one language to connect with people learning another language for real-time language exchange. Built to promote **cultural exchange, inclusivity, and accessible learning** through simple, user-friendly digital tools.
 
 ---
 
-##  Tech Stack  
+## Features
+- **JWT Authentication** – Secure login/registration with bcrypt-hashed passwords.
+- **Language Matching** – Connects learners based on their target and native languages.
+- **Exchange Interface** – Real-time chat system for practicing languages.
+- **User Profiles** – Learners can specify their skills, learning goals, and availability.
+- **PostgreSQL Database** – Stores users, preferences, and exchange history (Drizzle ORM).
+- **Responsive UI** – Built with Next.js for smooth navigation across devices.
+
+---
+
+## Tech Stack
 - **Frontend & Backend Framework:** Next.js
 - **Database:** PostgreSQL
-- **Authentication:** Firebase Authentication
+- **ORM:** Drizzle
+- **Authentication:** JWT (jsonwebtoken + bcrypt)
 - **Hosting:** Vercel
 
 
@@ -50,25 +50,20 @@ Set up environment variables
 Create a .env.local file in the project root with the following:
 
 DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DB_NAME
-NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_firebase_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_firebase_app_id
+JWT_SECRET=your_jwt_secret
 
 
  Project Structure
 project-verse/
-│── public/ # Static assets (images, icons, fonts, )
-│── scripts/ # Utility scripts for testing, setup, or automation
+│── public/ # Static assets (images, icons, fonts)
 │── src/ # Main application source code
 │ │── app/ # Next.js 15 App Router (routes, layouts, server components)
 │ │── components/ # Reusable React components (UI elements, forms, layouts)
-│ │── context/ # React context providers ( auth)
-│ │── data/ # Static or seed data ( constants, JSON files)
-│ │── lib/ # Configuration and helpers (db client, firebase, utils)
-│ │── queries/ # Database queries for postgres
+│ │── context/ # React context providers (auth)
+│ │── data/ # Static or seed data (constants, JSON files)
+│ │── db/ # Database schema, migrations, seed, Drizzle client
+│ │── hooks/ # Custom React hooks
+│ │── lib/ # Configuration and helpers (jwt, utils)
 │ │── types/ # TypeScript type definitions and interfaces
 │── .env.local # Environment variables (not committed to Git)
 │── package.json # Project metadata and dependencies

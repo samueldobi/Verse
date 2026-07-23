@@ -4,6 +4,7 @@ import { learnLanguages,learnInterests } from '@/data/data';
 import axios from 'axios';
 import { useAuth } from '@/context/auth';
 import { useRouter } from 'next/navigation';
+import { Languages, Target } from "lucide-react";
 
 export default function LearnPage() {
   const [speakLanguage, setSpeakLanguage] = useState('');
@@ -32,11 +33,11 @@ export default function LearnPage() {
         setIsLoading(true);
         setTimeout(() => {
           pairingRouter.push('/pairing');
-        }, 2000); // Simulate loading for 2 seconds
+        }, 2000);
     }catch(err){
       console.error("❌ Error saving preferences:", err);
+      setIsLoading(false);
     }
-    setIsLoading(false);
     
     // In real app, redirect to matching results or buddy profile
     alert(`Finding buddies who speak ${learnLanguage} and want to learn ${speakLanguage}!`);
@@ -66,19 +67,18 @@ export default function LearnPage() {
 
         {/* Main Form Card */}
         <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-          {/* Visual Header */}
-          <div className="relative p-8 bg-slate-100 dark:bg-slate-750">
-            <div className="flex items-center justify-center space-x-4 mb-6">
-              <div className="w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center shadow-lg">
-                <span className="text-white text-2xl font-bold">🗣️</span>
+          <div className="relative p-10 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-750 border-b border-slate-200 dark:border-slate-700">
+            <div className="flex items-center justify-center gap-6">
+              <div className="w-14 h-14 bg-green-100 dark:bg-green-900/30 rounded-2xl flex items-center justify-center">
+                <Languages className="w-7 h-7 text-green-600 dark:text-green-400" />
               </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <div className="w-4 h-0.5 bg-blue-500 rounded-full"></div>
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-blue-400"></div>
+                <div className="w-8 h-0.5 rounded-full bg-blue-300"></div>
+                <div className="w-2 h-2 rounded-full bg-blue-400"></div>
               </div>
-              <div className="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center shadow-lg">
-                <span className="text-white text-2xl font-bold">🎯</span>
+              <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center">
+                <Target className="w-7 h-7 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
           </div>
@@ -194,23 +194,12 @@ export default function LearnPage() {
           </div>
         </div>
 
-        {/* Bottom Encouragement */}
         <div className="text-center mt-12 space-y-4">
-          <div className="flex items-center justify-center space-x-8 text-sm text-slate-500 dark:text-slate-400">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-              <span>Safe & Verified</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-              <span>Free to Start</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-              <span>Global Community</span>
-            </div>
+          <div className="flex items-center justify-center gap-6 text-sm text-slate-500 dark:text-slate-400">
+            <span className="flex items-center gap-1.5">Safe & Verified</span>
+            <span className="flex items-center gap-1.5">Free to Start</span>
+            <span className="flex items-center gap-1.5">Global Community</span>
           </div>
-          
           <p className="text-slate-600 dark:text-slate-400 max-w-md mx-auto">
             Join thousands of language learners already making friends and improving their skills through cultural exchange.
           </p>

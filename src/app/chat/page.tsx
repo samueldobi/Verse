@@ -1,14 +1,11 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
-// import ProtectedRoute from '@/components/protectedRoutes/protectedRoutes';
 import { Message } from '@/types/learnTypes';
 import axios from 'axios';
 import { useAuth } from '@/context/auth';
 import Image from 'next/image';
 import {Socket, io} from "socket.io-client";
 import { RawMessage, Chat, Buddy } from '@/types/chatTypes';
-// initializing the websocket
-// const socket = io("http://localhost:5000");
 
 export default function ChatPage() {
   const [selectedBuddy, setSelectedBuddy] = useState< Buddy | null>(null);
@@ -28,10 +25,8 @@ export default function ChatPage() {
         `api/chats?userId=${userId}`
         )
         setChatList(res.data.getChats);
-        console.log("This is the chatlist:",res.data.getChats)
-        // console.log("this is the chat information",res.data.getChats)
       }catch(err){
-        console.log("Failed to fetch chats", err)
+        console.error("Failed to fetch chats", err)
       }
     }
     fetchChats();
@@ -55,7 +50,6 @@ export default function ChatPage() {
     ...prev,
     [formattedBuddy.chat_id]: []
   }));
-  console.log(formattedBuddy)
   }
 
   const handleSendMessage = async ():Promise<void> => {
@@ -81,17 +75,15 @@ export default function ChatPage() {
     setMessage('');
     // Api request 
     try{
-      
-      const res = await axios.post(
+      await axios.post(
         `api/chats/${selectedBuddy.chat_id}/messages`,{
           chatId: selectedBuddy.chat_id,
           senderId: userId,
           content: newMessage.text
         }
       )
-      console.log(res)
     }catch(err){
-      console.log(err)
+      console.error(err)
     }
   };
 
@@ -99,7 +91,6 @@ export default function ChatPage() {
   try {
     const res = await axios.get(`/api/chats/${chatId}/messages`);
     const data = res.data;
-    console.log(data)
 
     if (data.messages) {
       // Format backend data to match your frontend structure
@@ -123,11 +114,11 @@ export default function ChatPage() {
   }
 };
 
-  // Load messages when a user selects a buddy
   useEffect(() => {
   if (selectedBuddy) {
     fetchMessages(selectedBuddy.chat_id);
   }
+// eslint-disable-next-line react-hooks/exhaustive-deps
 }, [selectedBuddy]);
 useEffect(() => {
   if (selectedBuddy && socketRef.current) {
@@ -141,19 +132,25 @@ useEffect(() => {
       handleSendMessage();
     }
   };
-  // Socket function 
   const socketRef = useRef<Socket | null>(null);
 
 useEffect(() => {
-    const socket = io("http://localhost:5000");
+    const socket = io("http://localhost:5000", {
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
     socketRef.current = socket;
 
     socket.on("connect", () => {
-      console.log("🟢 Connected to socket:", socket.id);
+      console.log("Connected to socket:", socket.id);
+    });
+
+    socket.on("connect_error", (err) => {
+      console.error("Socket connection error:", err.message);
     });
 
     socket.on("receive_message", (msg) => {
-      console.log("📩 New message received:", msg);
+      console.log("New message received:", msg);
       setMessages((prev) => ({
         ...prev,
         [msg.chatId]: [...(prev[msg.chatId] || []), msg]
@@ -162,11 +159,11 @@ useEffect(() => {
 
     return () => {
       socket.disconnect();
+      socketRef.current = null;
     };
 }, []);
 
   return (
-    // <ProtectedRoute>
     <div className="h-screen bg-slate-50 dark:bg-slate-900 flex relative">
       {/* Mobile Overlay */}
       {showSidebar && selectedBuddy && (
@@ -181,10 +178,9 @@ useEffect(() => {
         <div className="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
           <div>
             <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Chats </h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              {/* {buddies.filter(b => b.online).length}  */}
-              online now
-            </p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                online now
+              </p>
           </div>
           <button onClick={() => setShowSidebar(false)} className="md:hidden p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg">
             <div className="w-6 h-6 relative">
@@ -195,7 +191,7 @@ useEffect(() => {
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          {/* This is where the buddies map component was  */}
+
         
             <div className="flex-1 overflow-y-auto">
           {chatList.length === 0 ? (
@@ -350,6 +346,6 @@ useEffect(() => {
         )}
       </div>
     </div>
-    // </ProtectedRoute>
+
   );
 }

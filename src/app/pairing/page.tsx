@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-// import ProtectedRoute from "@/components/protectedRoutes/protectedRoutes";
+
 import { MessageCircle, Globe, Star, Clock, MapPin } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '@/context/auth';
