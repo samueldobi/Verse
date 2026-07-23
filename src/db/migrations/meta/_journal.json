@@ -6,14 +6,14 @@
       "idx": 0,
       "version": "7",
       "when": 1784793874189,
-      "tag": "0000_modern_pete_wisdom",
+      "tag": "0000_initial",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
       "when": 1784794771764,
-      "tag": "0001_bumpy_black_cat",
+      "tag": "0001_add_password_column",
       "breakpoints": true
     }
   ]
